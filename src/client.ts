@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 const URL = "http://localhost:3000";
 
 export enum Person {
@@ -5,13 +7,8 @@ export enum Person {
     Lu = "Lu",
 }
 
-export enum SessionState {
-    Confirmable = "Confirmable",
-    Convertable = "Convertable",
-    Converted = "Converted",
-    Refused = "Refused",
-    Stale = "Stale",
-}
+export type SessionState = z.infer<typeof SessionState>;
+export const SessionState = z.enum(["Confirmable", "Convertable", "Converted", "Refused", "Stale"]);
 
 // Routes
 
@@ -71,13 +68,15 @@ export async function postSessionConvert() {
 
 export async function getSessionConfirmable(): Promise<number | null> {
     return decode200json(
-        await fetch(`${URL}/session/confirmable`, { credentials: "include", method: "GET" })
+        await fetch(`${URL}/session/confirmable`, { credentials: "include", method: "GET" }),
+        z.number().nullable().parse
     );
 }
 
 export async function getSessionState(): Promise<SessionState> {
     return decode200json(
-        await fetch(`${URL}/session/state`, { credentials: "include", method: "GET" })
+        await fetch(`${URL}/session/state`, { credentials: "include", method: "GET" }),
+        SessionState.parse
     );
 }
 
@@ -89,7 +88,7 @@ function decode200(response: Response) {
     }
 }
 
-async function decode200json<T>(response: Response): Promise<T> {
+async function decode200json<T>(response: Response, decoder: (_: any) => T): Promise<T> {
     decode200(response);
-    return await response.json();
+    return decoder(await response.json());
 }

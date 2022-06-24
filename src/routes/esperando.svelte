@@ -20,11 +20,11 @@
         try {
             const state = await getSessionState();
 
-            if (state == SessionState.Stale || state == SessionState.Converted) {
+            if (state == SessionState.enum.Stale || state == SessionState.enum.Converted) {
                 stale = true;
-            } else if (state == SessionState.Refused) {
+            } else if (state == SessionState.enum.Refused) {
                 refused = true;
-            } else if (state == SessionState.Convertable) {
+            } else if (state == SessionState.enum.Convertable) {
                 done = true;
 
                 await postSessionConvert();

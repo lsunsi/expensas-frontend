@@ -1,6 +1,7 @@
 {
     "name": "expensas",
     "version": "0.0.1",
+    "type": "module",
     "scripts": {
         "dev": "svelte-kit dev",
         "build": "svelte-kit build",
@@ -12,6 +13,9 @@
         "lint": "prettier --check --plugin-search-dir=. .",
         "format": "prettier --write --plugin-search-dir=. ."
     },
+    "dependencies": {
+        "zod": "^3.17.3"
+    },
     "devDependencies": {
         "@sveltejs/adapter-auto": "next",
         "@sveltejs/kit": "next",
@@ -22,6 +26,5 @@
         "svelte-preprocess": "^4.10.6",
         "tslib": "^2.3.1",
         "typescript": "^4.7.2"
-    },
-    "type": "module"
+    }
 }
