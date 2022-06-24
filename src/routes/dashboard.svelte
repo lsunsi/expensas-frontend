@@ -1,0 +1,68 @@
+<script lang="ts">
+    import { goto } from "$app/navigation";
+    import { onMount } from "svelte";
+    import {
+        getSessionConfirmable,
+        postSessionRefuse,
+        postSessionConfirm,
+        postSessionDrop,
+    } from "../client";
+
+    let confirmable: number | null;
+    let dropped = false;
+
+    async function pollConfirmable() {
+        if (!dropped) {
+            try {
+                confirmable = await getSessionConfirmable();
+            } catch (e) {
+                await goto("/caroco");
+            }
+        }
+    }
+
+    async function handleConfirm() {
+        if (confirmable) {
+            try {
+                await postSessionConfirm(confirmable);
+            } catch (e) {
+                await goto("/caroco");
+            }
+        }
+    }
+
+    async function handleRefuse() {
+        if (confirmable) {
+            try {
+                await postSessionRefuse(confirmable);
+            } catch (e) {
+                await goto("/caroco");
+            }
+        }
+    }
+
+    async function handleDrop() {
+        try {
+            dropped = true;
+            await postSessionDrop();
+            await goto("/quemvemla");
+        } catch (e) {
+            await goto("/caroco");
+        }
+    }
+
+    onMount(() => {
+        const interval = setInterval(pollConfirmable, 1000);
+        return () => clearInterval(interval);
+    });
+</script>
+
+<div class="container">
+    <h1>Expensas</h1>
+
+    {#if confirmable}
+        <button class="button" on:click|once={handleConfirm}>Cola aí</button>
+        <button class="button" on:click|once={handleRefuse}>Sai fora</button>
+    {/if}
+    <button class="button button-outline" on:click|once={handleDrop}>VwlFlw</button>
+</div>
