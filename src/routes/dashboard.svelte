@@ -1,5 +1,6 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
+    import ExpenseForm from "../components/expense-form.svelte";
     import { onMount } from "svelte";
     import {
         getSessionConfirmable,
@@ -65,4 +66,6 @@
         <button class="button" on:click|once={handleRefuse}>Sai fora</button>
     {/if}
     <button class="button button-outline" on:click|once={handleDrop}>VwlFlw</button>
+
+    <ExpenseForm />
 </div>

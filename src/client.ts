@@ -2,13 +2,11 @@ import { z } from "zod";
 
 const URL = "http://localhost:3000";
 
-export enum Person {
-    Ale = "Ale",
-    Lu = "Lu",
-}
+export type Person = z.infer<typeof Person>;
+export const Person = z.enum(["Ale", "Lu"]);
 
-export type SessionState = z.infer<typeof SessionState>;
-export const SessionState = z.enum(["Confirmable", "Convertable", "Converted", "Refused", "Stale"]);
+export type Split = z.infer<typeof Split>;
+export const Split = z.enum(["Proportional", "Arbitrary", "Evenly"]);
 
 // Routes
 
@@ -73,10 +71,58 @@ export async function getSessionConfirmable(): Promise<number | null> {
     );
 }
 
+export type SessionState = z.infer<typeof SessionState>;
+export const SessionState = z.enum(["Confirmable", "Convertable", "Converted", "Refused", "Stale"]);
+
 export async function getSessionState(): Promise<SessionState> {
     return decode200json(
         await fetch(`${URL}/session/state`, { credentials: "include", method: "GET" }),
         SessionState.parse
+    );
+}
+
+export type Expense = z.infer<typeof Expense>;
+const Expense = z.object({
+    creator: Person,
+    payer: Person,
+    split: Split,
+    paid: z.number(),
+    owed: z.number(),
+    confirmed_at: z.date().nullable(),
+    refused_at: z.date().nullable(),
+    created_at: z.date(),
+});
+
+export async function getExpenseList(): Promise<Expense[]> {
+    return decode200json(
+        await fetch(`${URL}/expense/list`, { credentials: "include", method: "GET" }),
+        Expense.array().parse
+    );
+}
+
+export async function postExpenseSubmit(
+    payer: Person,
+    split: Split,
+    paid: number,
+    owed: number | null
+) {
+    const body = JSON.stringify({ payer, split, paid, owed });
+    const headers = { 'Content-Type': 'application/json', 'Accept': 'application/json' };
+
+    return decode200(
+        await fetch(`${URL}/expense/submit`, { credentials: "include", method: "POST", headers, body })
+    );
+}
+
+export async function postExpenseConfirm(id: number) {
+    return decode200(
+        await fetch(`${URL}/expense/confirm/${id}`, { credentials: "include", method: "POST" })
+    );
+}
+
+export async function postExpenseRefuse(id: number) {
+    return decode200(
+        await fetch(`${URL}/expense/refuse/${id}`, { credentials: "include", method: "POST" })
     );
 }
 

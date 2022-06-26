@@ -17,6 +17,6 @@
 
     <p>Quem vem lá?</p>
 
-    <button on:click|once={() => handleClick(Person.Ale)}>Alê</button>
-    <button on:click|once={() => handleClick(Person.Lu)}>Lu</button>
+    <button on:click|once={() => handleClick(Person.enum.Ale)}>Alê</button>
+    <button on:click|once={() => handleClick(Person.enum.Lu)}>Lu</button>
 </div>
