@@ -107,10 +107,15 @@ export async function postExpenseSubmit(
     owed: number | null
 ) {
     const body = JSON.stringify({ payer, split, paid, owed });
-    const headers = { 'Content-Type': 'application/json', 'Accept': 'application/json' };
+    const headers = { "Content-Type": "application/json", Accept: "application/json" };
 
     return decode200(
-        await fetch(`${URL}/expense/submit`, { credentials: "include", method: "POST", headers, body })
+        await fetch(`${URL}/expense/submit`, {
+            credentials: "include",
+            method: "POST",
+            headers,
+            body,
+        })
     );
 }
 

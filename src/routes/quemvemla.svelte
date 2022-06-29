@@ -12,7 +12,7 @@
     }
 </script>
 
-<div class="container">
+<div>
     <h1>Expensas</h1>
 
     <p>Quem vem lá?</p>

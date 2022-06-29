@@ -8,6 +8,7 @@
         postSessionConfirm,
         postSessionDrop,
     } from "../client";
+    import Button from "@smui/button";
 
     let confirmable: number | null;
     let dropped = false;
@@ -58,14 +59,14 @@
     });
 </script>
 
-<div class="container">
+<div>
     <h1>Expensas</h1>
 
     {#if confirmable}
-        <button class="button" on:click|once={handleConfirm}>Cola aí</button>
-        <button class="button" on:click|once={handleRefuse}>Sai fora</button>
+        <Button on:click|once={handleConfirm}>Cola aí</Button>
+        <Button on:click|once={handleRefuse}>Sai fora</Button>
     {/if}
-    <button class="button button-outline" on:click|once={handleDrop}>VwlFlw</button>
+    <Button on:click|once={handleDrop}>VwlFlw</Button>
 
     <ExpenseForm />
 </div>
