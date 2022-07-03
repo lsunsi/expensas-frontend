@@ -10,16 +10,16 @@ export const Split = z.enum(["Proportional", "Arbitrary", "Evenly"]);
 
 export type Label = z.infer<typeof Label>;
 export const Label = z.enum([
-    'Market',
-    'Delivery',
-    'Transport',
-    'Leisure',
-    'Water',
-    'Internet',
-    'Gas',
-    'Housing',
-    'Electricity',
-    'Furnitance',
+    "Market",
+    "Delivery",
+    "Transport",
+    "Leisure",
+    "Water",
+    "Internet",
+    "Gas",
+    "Housing",
+    "Electricity",
+    "Furnitance",
 ]);
 
 // Routes
@@ -125,7 +125,7 @@ export async function postExpenseSubmit(
     owed: number | null,
     label: Label,
     detail: string | null,
-    date: string,
+    date: string
 ) {
     const body = JSON.stringify({ payer, split, paid, owed, label, detail, date });
     const headers = { "Content-Type": "application/json", Accept: "application/json" };

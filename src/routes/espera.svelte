@@ -7,12 +7,9 @@
         postSessionConvert,
         SessionState,
     } from "../client";
-    import TopAppBar, { Row, Section, Title, AutoAdjust } from "@smui/top-app-bar";
-    import type { TopAppBarComponentDev } from "@smui/top-app-bar";
     import CircularProgress from "@smui/circular-progress";
     import Button from "@smui/button";
 
-    let topAppBar: TopAppBarComponentDev;
     let refused = false;
     let stale = false;
     let done = false;
@@ -33,7 +30,7 @@
                 done = true;
 
                 await postSessionConvert();
-                await goto("/dashboard");
+                await goto("/resumao");
             }
         } catch (e) {
             console.log(e);
@@ -46,7 +43,7 @@
 
         try {
             await postSessionCancel();
-            await goto("/quemvemla");
+            await goto("/quem");
         } catch (e) {
             await goto("/caroco");
         }
@@ -56,7 +53,7 @@
         done = true;
 
         await postSessionCancel();
-        await goto("/quemvemla");
+        await goto("/quem");
     }
 
     onMount(() => {
@@ -65,25 +62,16 @@
     });
 </script>
 
-<TopAppBar bind:this={topAppBar} variant="short">
-    <Row>
-        <Section>
-            <Title>Expensas</Title>
-        </Section>
-    </Row>
-</TopAppBar>
-<AutoAdjust {topAppBar}>
-    {#if refused}
-        <p>Te negaram do outro lado.</p>
-        <Button on:click|once={handleBack}>Foi mal</Button>
-    {:else if stale}
-        <p>Já era essa tentativa. RIP</p>
-        <Button on:click|once={handleBack}>Ok...</Button>
-    {:else}
-        <p>Pede pra te aprovarem aí</p>
-        <Button on:click|once={handleCancel}>Desisto</Button>
-        <div style="display: flex; justify-content: center">
-            <CircularProgress style="height: 32px; width: 32px;" indeterminate />
-        </div>
-    {/if}
-</AutoAdjust>
+{#if refused}
+    <p>Te negaram do outro lado.</p>
+    <Button on:click|once={handleBack}>Foi mal</Button>
+{:else if stale}
+    <p>Já era essa tentativa. RIP</p>
+    <Button on:click|once={handleBack}>Ok...</Button>
+{:else}
+    <p>Pede pra te aprovarem aí</p>
+    <Button on:click|once={handleCancel}>Desisto</Button>
+    <div style="display: flex; justify-content: center">
+        <CircularProgress style="height: 32px; width: 32px;" indeterminate />
+    </div>
+{/if}

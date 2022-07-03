@@ -6,20 +6,16 @@
         getSessionConfirmable,
         postSessionRefuse,
         postSessionConfirm,
-        postSessionDrop,
         getExpenseList,
         postExpenseConfirm,
         postExpenseRefuse,
     } from "../client";
     import Button from "@smui/button";
-    import TopAppBar, { Row, Section, Title, AutoAdjust } from "@smui/top-app-bar";
-    import type { TopAppBarComponentDev } from "@smui/top-app-bar";
     import Fab, { Icon } from "@smui/fab";
     import CircularProgress from "@smui/circular-progress";
     import List, { Item, Meta, Text, PrimaryText, SecondaryText } from "@smui/list";
-    import Badge from "@smui-extra/badge";
+    import Layout from "../components/layout.svelte";
 
-    let topAppBar: TopAppBarComponentDev;
     let confirmable: number | null;
     let dropped = false;
     let items = getExpenseList();
@@ -55,19 +51,9 @@
         }
     }
 
-    async function handleDrop() {
-        try {
-            dropped = true;
-            await postSessionDrop();
-            await goto("/quemvemla");
-        } catch (e) {
-            await goto("/caroco");
-        }
-    }
-
     async function handleAdd() {
         try {
-            await goto("/mandargasto");
+            await goto("/mais");
         } catch (e) {
             await goto("/caroco");
         }
@@ -103,17 +89,7 @@
     });
 </script>
 
-<TopAppBar bind:this={topAppBar} variant="short">
-    <Row>
-        <Section>
-            <Title>Expensas</Title>
-        </Section>
-        <Section align="end">
-            <IconButton class="material-icons" on:click|once={handleDrop}>logout</IconButton>
-        </Section>
-    </Row>
-</TopAppBar>
-<AutoAdjust {topAppBar}>
+<Layout tab="list">
     <div>
         {#if confirmable}
             <Button on:click|once={handleConfirm}>Cola aí</Button>
@@ -158,4 +134,4 @@
             <Icon class="material-icons">add</Icon>
         </Fab>
     </div>
-</AutoAdjust>
+</Layout>
