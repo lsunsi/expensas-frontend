@@ -1,11 +1,5 @@
 <script lang="ts" context="module">
-    import {
-        getSessionConfirmable,
-        getSummary,
-        postSessionConfirm,
-        postSessionRefuse,
-        type Summary,
-    } from "../client";
+    import { getSummary } from "../client";
     import type { Load } from "./__types/resumao";
 
     export const load: Load = async ({ fetch }) => {
@@ -26,6 +20,12 @@
     import Button, { Label } from "@smui/button";
     import { goto } from "$app/navigation";
     import { onMount } from "svelte";
+    import {
+        getSessionConfirmable,
+        postSessionConfirm,
+        postSessionRefuse,
+        type Summary,
+    } from "../client";
 
     export let summary: Summary;
 
@@ -56,6 +56,10 @@
         return () => clearInterval(interval);
     });
 </script>
+
+<svelte:head>
+    <title>resumão dos custo</title>
+</svelte:head>
 
 <Layout tab="home">
     <Paper variant="unelevated">

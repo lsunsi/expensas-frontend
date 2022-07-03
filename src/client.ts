@@ -112,7 +112,7 @@ const Expense = z.object({
     created_at: z.string(),
 });
 
-export async function getExpenseList(): Promise<Expense[]> {
+export async function getExpenseList(fetch: LoadEvent["fetch"]): Promise<Expense[]> {
     return decode200json(
         await fetch(`${URL}/expense/list`, { credentials: "include", method: "GET" }),
         Expense.array().parse

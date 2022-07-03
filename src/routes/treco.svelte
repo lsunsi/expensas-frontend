@@ -14,6 +14,10 @@
     }
 </script>
 
+<svelte:head>
+    <title>mais treco</title>
+</svelte:head>
+
 <Layout tab="misc">
     <List>
         <Item on:click={handleLeave}>
