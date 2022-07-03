@@ -2,7 +2,6 @@
 
 @use "@material/theme/color-palette";
 
-// Svelte Colors!
 @use "@material/theme/index" as theme with (
     $primary: #ff3e00,
     $secondary: #676778,
@@ -11,15 +10,4 @@
     $error: color-palette.$red-900
 );
 
-html,
-body {
-    background-color: theme.$surface;
-    color: theme.$on-surface;
-}
-
-a {
-    color: #40b3ff;
-}
-a:visited {
-    color: color.scale(#40b3ff, $lightness: -35%);
-}
+@use "@material/typography/mdc-typography";

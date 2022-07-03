@@ -1,3 +1,4 @@
+import type { LoadEvent } from "@sveltejs/kit";
 import { z } from "zod";
 
 const URL = "http://localhost:3000";
@@ -149,6 +150,21 @@ export async function postExpenseConfirm(id: number) {
 export async function postExpenseRefuse(id: number) {
     return decode200(
         await fetch(`${URL}/expense/refuse/${id}`, { credentials: "include", method: "POST" })
+    );
+}
+
+export type Summary = z.infer<typeof Summary>;
+const Summary = z.object({
+    me: Person,
+    owed: z.number(),
+    pending_you: z.number(),
+    pending_other: z.number(),
+});
+
+export async function getSummary(fetch: LoadEvent["fetch"]): Promise<Summary> {
+    return decode200json(
+        await fetch(`${URL}/summary`, { credentials: "include", method: "GET" }),
+        Summary.parse
     );
 }
 

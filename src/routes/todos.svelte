@@ -1,55 +1,14 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import IconButton from "@smui/icon-button";
-    import { onMount } from "svelte";
-    import {
-        getSessionConfirmable,
-        postSessionRefuse,
-        postSessionConfirm,
-        getExpenseList,
-        postExpenseConfirm,
-        postExpenseRefuse,
-    } from "../client";
-    import Button from "@smui/button";
+    import { getExpenseList, postExpenseConfirm, postExpenseRefuse } from "../client";
     import Fab, { Icon } from "@smui/fab";
     import CircularProgress from "@smui/circular-progress";
     import List, { Item, Meta, Text, PrimaryText, SecondaryText } from "@smui/list";
     import Layout from "../components/layout.svelte";
 
-    let confirmable: number | null;
-    let dropped = false;
     let items = getExpenseList();
     let selected: number | null = null;
-
-    async function pollConfirmable() {
-        if (!dropped) {
-            try {
-                confirmable = await getSessionConfirmable();
-            } catch (e) {
-                await goto("/caroco");
-            }
-        }
-    }
-
-    async function handleConfirm() {
-        if (confirmable) {
-            try {
-                await postSessionConfirm(confirmable);
-            } catch (e) {
-                await goto("/caroco");
-            }
-        }
-    }
-
-    async function handleRefuse() {
-        if (confirmable) {
-            try {
-                await postSessionRefuse(confirmable);
-            } catch (e) {
-                await goto("/caroco");
-            }
-        }
-    }
 
     async function handleAdd() {
         try {
@@ -63,7 +22,7 @@
         return () => (selected = selected === id ? null : id);
     }
 
-    function handleItemConfirm(id: number) {
+    function handleConfirm(id: number) {
         return async () => {
             try {
                 await postExpenseConfirm(id);
@@ -73,7 +32,7 @@
         };
     }
 
-    function handleItemRefuse(id: number) {
+    function handleRefuse(id: number) {
         return async () => {
             try {
                 await postExpenseRefuse(id);
@@ -82,21 +41,9 @@
             }
         };
     }
-
-    onMount(() => {
-        const interval = setInterval(pollConfirmable, 1000);
-        return () => clearInterval(interval);
-    });
 </script>
 
 <Layout tab="list">
-    <div>
-        {#if confirmable}
-            <Button on:click|once={handleConfirm}>Cola aí</Button>
-            <Button on:click|once={handleRefuse}>Sai fora</Button>
-        {/if}
-    </div>
-
     {#await items}
         <div style="display: flex; justify-content: center">
             <CircularProgress style="height: 32px; width: 32px;" indeterminate />
@@ -112,10 +59,10 @@
                     </Text>
                     {#if selected === item.id}
                         <Meta>
-                            <IconButton class="material-icons" on:click={handleItemRefuse(item.id)}
+                            <IconButton class="material-icons" on:click={handleRefuse(item.id)}
                                 >close</IconButton
                             >
-                            <IconButton class="material-icons" on:click={handleItemConfirm(item.id)}
+                            <IconButton class="material-icons" on:click={handleConfirm(item.id)}
                                 >done</IconButton
                             >
                         </Meta>
@@ -129,7 +76,7 @@
         {@debug items}
     {/await}
 
-    <div style="display: flex; justify-content: end;">
+    <div style="float: right">
         <Fab color="primary" on:click={handleAdd}>
             <Icon class="material-icons">add</Icon>
         </Fab>

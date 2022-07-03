@@ -8,7 +8,7 @@
 
     let tabs: { name: Name; icon: string; path: string }[] = [
         { name: "home", icon: "home", path: "/resumao" },
-        { name: "list", icon: "list", path: "/tudo" },
+        { name: "list", icon: "list", path: "/todos" },
         { name: "misc", icon: "more_horiz", path: "/treco" },
     ];
 

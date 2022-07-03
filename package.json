@@ -17,8 +17,10 @@
         "zod": "^3.17.3"
     },
     "devDependencies": {
+        "@material/typography": "^13.0.0",
         "@smui-extra/badge": "^6.0.0-beta.16",
         "@smui/button": "^6.0.0-beta.16",
+        "@smui/card": "^6.0.0-beta.16",
         "@smui/circular-progress": "^6.0.0-beta.16",
         "@smui/fab": "^6.0.0-beta.16",
         "@smui/form-field": "^6.0.0-beta.16",
