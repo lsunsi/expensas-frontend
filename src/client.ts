@@ -8,6 +8,20 @@ export const Person = z.enum(["Ale", "Lu"]);
 export type Split = z.infer<typeof Split>;
 export const Split = z.enum(["Proportional", "Arbitrary", "Evenly"]);
 
+export type Label = z.infer<typeof Label>;
+export const Label = z.enum([
+    'Market',
+    'Delivery',
+    'Transport',
+    'Leisure',
+    'Water',
+    'Internet',
+    'Gas',
+    'Housing',
+    'Electricity',
+    'Furnitance',
+]);
+
 // Routes
 
 export async function postSessionAsk(who: Person) {
@@ -87,6 +101,9 @@ const Expense = z.object({
     creator: Person,
     payer: Person,
     split: Split,
+    label: Label,
+    detail: z.string().nullable(),
+    date: z.string(),
     paid: z.number(),
     owed: z.number(),
     confirmed_at: z.string().nullable(),
@@ -105,9 +122,12 @@ export async function postExpenseSubmit(
     payer: Person,
     split: Split,
     paid: number,
-    owed: number | null
+    owed: number | null,
+    label: Label,
+    detail: string | null,
+    date: string,
 ) {
-    const body = JSON.stringify({ payer, split, paid, owed });
+    const body = JSON.stringify({ payer, split, paid, owed, label, detail, date });
     const headers = { "Content-Type": "application/json", Accept: "application/json" };
 
     return decode200(

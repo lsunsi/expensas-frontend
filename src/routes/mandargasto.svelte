@@ -11,7 +11,7 @@
     import Button from "@smui/button";
     import TopAppBar, { Row, Section, Title, AutoAdjust } from "@smui/top-app-bar";
     import type { TopAppBarComponentDev } from "@smui/top-app-bar";
-    import { Person, postExpenseSubmit, Split } from "../client";
+    import { Person, Label, postExpenseSubmit, Split } from "../client";
     import Select, { Option } from "@smui/select";
     import Textfield from "@smui/textfield";
     import FormField from "@smui/form-field";
@@ -21,6 +21,9 @@
     let split: Split | null = null;
     let paid: number | null = null;
     let owed: number | null = null;
+    let label: Label | null = null;
+    let detail: string | null = null;
+    let date: string | null = null;
 
     async function handleBack() {
         try {
@@ -31,14 +34,22 @@
     }
 
     async function handleSubmit() {
-        if (paid === null || payer === null || split === null) {
+        if (paid === null || payer === null || split === null || date === null || label === null) {
             return;
         }
         try {
             if (split === "Arbitrary" && owed !== null) {
-                await postExpenseSubmit(payer, "Arbitrary", paid * 100, owed * 100);
+                await postExpenseSubmit(
+                    payer,
+                    "Arbitrary",
+                    paid * 100,
+                    owed * 100,
+                    label,
+                    detail,
+                    date
+                );
             } else {
-                await postExpenseSubmit(payer, split, paid * 100, null);
+                await postExpenseSubmit(payer, split, paid * 100, null, label, detail, date);
             }
 
             await goto("/dashboard");
@@ -69,11 +80,27 @@
         </FormField>
 
         <FormField>
+            <Textfield label="Data" type="date" bind:value={date} />
+        </FormField>
+
+        <FormField>
             <Select bind:value={split} label="Divisão">
                 {#each Split.options as split}
                     <Option value={split}>{split}</Option>
                 {/each}
             </Select>
+        </FormField>
+
+        <FormField>
+            <Select bind:value={label} label="Etiqueta">
+                {#each Label.options as person}
+                    <Option value={person}>{person}</Option>
+                {/each}
+            </Select>
+        </FormField>
+
+        <FormField>
+            <Textfield label="Detalhe" type="text" bind:value={detail} />
         </FormField>
 
         <FormField>
