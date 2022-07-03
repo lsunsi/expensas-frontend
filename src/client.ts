@@ -83,14 +83,15 @@ export async function getSessionState(): Promise<SessionState> {
 
 export type Expense = z.infer<typeof Expense>;
 const Expense = z.object({
+    id: z.number(),
     creator: Person,
     payer: Person,
     split: Split,
     paid: z.number(),
     owed: z.number(),
-    confirmed_at: z.date().nullable(),
-    refused_at: z.date().nullable(),
-    created_at: z.date(),
+    confirmed_at: z.string().nullable(),
+    refused_at: z.string().nullable(),
+    created_at: z.string(),
 });
 
 export async function getExpenseList(): Promise<Expense[]> {
