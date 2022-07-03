@@ -16,21 +16,12 @@
     import { goto } from "$app/navigation";
     import IconButton from "@smui/icon-button";
     import { postExpenseConfirm, postExpenseRefuse } from "../client";
-    import Fab, { Icon } from "@smui/fab";
     import List, { Item, Meta, Text, PrimaryText, SecondaryText } from "@smui/list";
     import Layout from "../components/layout.svelte";
     import type { Expense } from "../client";
 
     export let expenses: Expense[];
     let selected: number | null = null;
-
-    async function handleAdd() {
-        try {
-            await goto("/mais");
-        } catch {
-            await goto("/caroco");
-        }
-    }
 
     function handleItemSelect(id: number) {
         selected = selected === id ? null : id;
@@ -81,10 +72,4 @@
             </Item>
         {/each}
     </List>
-
-    <div style="float: right">
-        <Fab color="primary" on:click={handleAdd}>
-            <Icon class="material-icons">add</Icon>
-        </Fab>
-    </div>
 </Layout>

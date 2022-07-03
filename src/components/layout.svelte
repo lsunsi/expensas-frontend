@@ -2,7 +2,6 @@
     import TopAppBar, { Row, Section, Title } from "@smui/top-app-bar";
     import Tab, { Icon } from "@smui/tab";
     import TabBar from "@smui/tab-bar";
-    import { goto } from "$app/navigation";
 
     type Name = "home" | "list" | "misc";
 
@@ -17,14 +16,20 @@
 </script>
 
 <div class="container">
-    <TopAppBar variant="static"><Row><Section><Title>Expensas</Title></Section></Row></TopAppBar>
+    <TopAppBar variant="static">
+        <Row>
+            <Section>
+                <Title>Expensas</Title>
+            </Section>
+        </Row>
+    </TopAppBar>
 
     <div class="slot">
         <slot />
     </div>
 
     <TabBar {tabs} let:tab {active}>
-        <Tab {tab} on:click={() => goto(tab.path)}>
+        <Tab {tab} href={tab.path}>
             <Icon class="material-icons">{tab.icon}</Icon>
         </Tab>
     </TabBar>

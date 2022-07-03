@@ -20,6 +20,7 @@
     import Button, { Label } from "@smui/button";
     import { goto } from "$app/navigation";
     import { onMount } from "svelte";
+    import Fab, { Icon } from "@smui/fab";
     import {
         getSessionConfirmable,
         postSessionConfirm,
@@ -62,83 +63,103 @@
 </svelte:head>
 
 <Layout tab="home">
-    <Paper variant="unelevated">
-        <Title>Olá {{ Lu: "Lucas", Ale: "Alê" }[summary.me]}!</Title>
+    <div class="container">
+        <Paper variant="unelevated" style="">
+            <Title>Olá {{ Lu: "Lucas", Ale: "Alê" }[summary.me]}!</Title>
 
-        {#if confirmable}
-            <div class="card">
-                <Card padded>
-                    <Content>
-                        <div class="mdc-typography--overline">Knock knock</div>
-                        <span class="mdc-typography--body1">Alguém pediu acesso ao app</span>
-                    </Content>
+            {#if confirmable}
+                <div class="card">
+                    <Card padded>
+                        <Content>
+                            <div class="mdc-typography--overline">Knock knock</div>
+                            <span class="mdc-typography--body1">Alguém pediu acesso ao app</span>
+                        </Content>
 
-                    <Actions>
-                        <Button on:click={handleRefuse}>
-                            <Label>Nope</Label>
-                        </Button>
-                        <Button on:click={handleConfirm}>
-                            <Label>Chega mais</Label>
-                        </Button>
-                    </Actions>
-                </Card>
-            </div>
-        {/if}
+                        <Actions>
+                            <Button on:click={handleRefuse}>
+                                <Label>Nope</Label>
+                            </Button>
+                            <Button on:click={handleConfirm}>
+                                <Label>Chega mais</Label>
+                            </Button>
+                        </Actions>
+                    </Card>
+                </div>
+            {/if}
 
-        {#if summary.pending_you}
-            <div class="card">
-                <Card padded>
-                    <Content>
-                        <div class="mdc-typography--overline">Novos gastos</div>
-                        <span class="mdc-typography--body1">
-                            Faltam {summary.pending_you} gastos pra você avaliar
-                        </span>
-                    </Content>
+            {#if summary.pending_you}
+                <div class="card">
+                    <Card padded>
+                        <Content>
+                            <div class="mdc-typography--overline">Novos gastos</div>
+                            <span class="mdc-typography--body1">
+                                Faltam {summary.pending_you} gastos pra você avaliar
+                            </span>
+                        </Content>
 
-                    <Actions fullBleed>
-                        <Button on:click={() => goto("/todos")}>
-                            <Label>Ver lista</Label>
-                            <i class="material-icons" aria-hidden="true">arrow_forward</i>
-                        </Button>
-                    </Actions>
-                </Card>
-            </div>
-        {/if}
+                        <Actions fullBleed>
+                            <Button on:click={() => goto("/todos")}>
+                                <Label>Ver lista</Label>
+                                <i class="material-icons" aria-hidden="true">arrow_forward</i>
+                            </Button>
+                        </Actions>
+                    </Card>
+                </div>
+            {/if}
 
-        <div class="card">
-            <Card variant="outlined" padded>
-                <Content>
-                    <div class="mdc-typography--overline">Estado de devimento</div>
-                    <span class="mdc-typography--body1">
-                        {#if summary.owed > 0}
-                            Você é devido {formatCents(summary.owed)} atualmente
-                        {:else if summary.owed < 0}
-                            Você deve {formatCents(-summary.owed)} atualmente
-                        {:else}
-                            Ninguém deve ninguém
-                        {/if}
-                    </span>
-                </Content>
-            </Card>
-        </div>
-
-        {#if summary.pending_other}
             <div class="card">
                 <Card variant="outlined" padded>
                     <Content>
-                        <div class="mdc-typography--overline">Gastos pendentes</div>
+                        <div class="mdc-typography--overline">Estado de devimento</div>
                         <span class="mdc-typography--body1">
-                            Você lançou {summary.pending_other} gastos que não foram avaliados ainda
+                            {#if summary.owed > 0}
+                                Você é devido {formatCents(summary.owed)} atualmente
+                            {:else if summary.owed < 0}
+                                Você deve {formatCents(-summary.owed)} atualmente
+                            {:else}
+                                Ninguém deve ninguém
+                            {/if}
                         </span>
                     </Content>
                 </Card>
             </div>
-        {/if}
-    </Paper>
+
+            {#if summary.pending_other}
+                <div class="card">
+                    <Card variant="outlined" padded>
+                        <Content>
+                            <div class="mdc-typography--overline">Gastos pendentes</div>
+                            <span class="mdc-typography--body1">
+                                Você lançou {summary.pending_other} gastos que não foram avaliados ainda
+                            </span>
+                        </Content>
+                    </Card>
+                </div>
+            {/if}
+        </Paper>
+
+        <div class="add">
+            <Fab color="primary" href="/mais">
+                <Icon class="material-icons">add</Icon>
+            </Fab>
+        </div>
+    </div>
 </Layout>
 
 <style>
+    .container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
     .card {
         padding-top: 32px;
+    }
+
+    .add {
+        text-align: center;
+        padding-bottom: 16px;
     }
 </style>
