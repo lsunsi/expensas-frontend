@@ -1,7 +1,7 @@
 import type { LoadEvent } from "@sveltejs/kit";
 import { z } from "zod";
 
-const URL = "http://localhost:3000";
+const URL = "http://localhost:8001";
 
 export type Person = z.infer<typeof Person>;
 export const Person = z.enum(["Ale", "Lu"]);
