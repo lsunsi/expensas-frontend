@@ -1,0 +1,18 @@
+[Unit]
+Description=Expensas frontend
+
+Requires=network-online.target expensasb.service
+After=network-online.target expensasb.service
+
+[Service]
+Type=simple
+ExecStart=node /home/lsunsi/expensas/build/index.js
+
+User=expensas
+Group=expensas
+
+Environment=HOST=127.0.0.1
+Environment=PORT=8002
+
+[Install]
+WantedBy=multi-user.target
