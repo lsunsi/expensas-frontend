@@ -1,7 +1,7 @@
 import type { LoadEvent } from "@sveltejs/kit";
 import { z } from "zod";
 
-const URL = "http://localhost:8001";
+const URL = import.meta.env.VITE_SERVER_URL;
 
 export type Person = z.infer<typeof Person>;
 export const Person = z.enum(["Ale", "Lu"]);
@@ -72,7 +72,7 @@ export async function postSessionRefuse(id: number) {
 
 export async function postSessionConvert() {
     decode200(
-        await fetch("http://localhost:3000/session/convert", {
+        await fetch(`${URL}/session/convert`, {
             credentials: "include",
             method: "POST",
         })
