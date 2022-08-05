@@ -77,9 +77,9 @@
         <Textfield
             label="Valor Pago"
             type="number"
-            min="1"
-            max="1000"
-            step="0.01"
+            input$min="1"
+            input$max="9999"
+            input$step="0.01"
             bind:value={paid}
         />
     </FormField>
