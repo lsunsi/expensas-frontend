@@ -11,7 +11,7 @@
         { name: "misc", icon: "more_horiz", path: "/treco" },
     ];
 
-    export let tab: Name;
+    export let tab: Name | null;
     let active = tabs.find((t) => t.name === tab);
 </script>
 
