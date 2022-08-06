@@ -28,7 +28,7 @@
     import Layout from "../components/layout.svelte";
     import type { Expense } from "../client";
     import Button from "@smui/button";
-    import { formatCents } from "../format";
+    import { formatCents, translateLabel } from "../format";
 
     export let expenses: Expense[];
 
@@ -108,15 +108,21 @@
             {/if}
             <List threeLine nonInteractive>
                 {#each finished as e}
-                    <Item>
-                        <Text>
-                            <span class:finished-text={e.refused_at !== null}>
-                                <PrimaryText>{formatCents(e.owed)}</PrimaryText>
-                                <SecondaryText>{formatCents(e.paid)} total</SecondaryText>
-                                <SecondaryText>{e.payer} pagou</SecondaryText>
-                            </span>
-                        </Text>
-                    </Item>
+                    <Wrapper>
+                        <Item>
+                            <Text>
+                                <span class:finished-text={e.refused_at !== null}>
+                                    <PrimaryText>{formatCents(e.owed)}</PrimaryText>
+                                    <SecondaryText>{formatCents(e.paid)} total</SecondaryText>
+                                    <SecondaryText>{e.payer} pagou</SecondaryText>
+                                </span>
+                            </Text>
+                            <Meta>{translateLabel(e.label)}</Meta>
+                        </Item>
+                        {#if e.detail !== null}
+                            <Tooltip xPos="center">{e.detail}</Tooltip>
+                        {/if}
+                    </Wrapper>
                 {/each}
             </List>
         </Group>
