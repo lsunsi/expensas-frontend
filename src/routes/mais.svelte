@@ -6,6 +6,7 @@
     import Textfield from "@smui/textfield";
     import FormField from "@smui/form-field";
     import Layout from "../components/layout.svelte";
+    import { translateLabel, translateSplit } from "../format";
 
     let payer: Person | null = null;
     let split: Split | null = null;
@@ -56,21 +57,21 @@
         </FormField>
 
         <FormField style="width: 100%">
-            <Textfield style="width: 100%;" abel="Data" type="date" bind:value={date} />
+            <Textfield style="width: 100%;" label="Data" type="date" bind:value={date} />
         </FormField>
 
         <FormField style="width: 100%">
             <Select style="width: 100%" bind:value={split} label="Divisão">
                 {#each Split.options as split}
-                    <Option value={split}>{split}</Option>
+                    <Option value={split}>{translateSplit(split)}</Option>
                 {/each}
             </Select>
         </FormField>
 
         <FormField style="width: 100%">
             <Select style="width: 100%" bind:value={label} label="Etiqueta">
-                {#each Label.options as person}
-                    <Option value={person}>{person}</Option>
+                {#each Label.options as label}
+                    <Option value={label}>{translateLabel(label)}</Option>
                 {/each}
             </Select>
         </FormField>
