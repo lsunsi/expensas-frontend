@@ -99,7 +99,7 @@ export async function getSessionState(): Promise<SessionState> {
 export type Expense = z.infer<typeof Expense>;
 const Expense = z.object({
     id: z.number(),
-    creator: Person,
+    yours: z.boolean(),
     payer: Person,
     split: Split,
     label: Label,

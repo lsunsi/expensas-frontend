@@ -13,31 +13,46 @@
 </script>
 
 <script lang="ts">
+    import Tooltip, { Wrapper } from "@smui/tooltip";
     import { goto } from "$app/navigation";
-    import IconButton from "@smui/icon-button";
     import { postExpenseConfirm, postExpenseRefuse } from "../client";
-    import List, { Item, Meta, Text, PrimaryText, SecondaryText } from "@smui/list";
+    import List, {
+        Group,
+        Item,
+        Meta,
+        Text,
+        PrimaryText,
+        Subheader,
+        SecondaryText,
+    } from "@smui/list";
     import Layout from "../components/layout.svelte";
     import type { Expense } from "../client";
+    import Button from "@smui/button";
+    import { formatCents } from "../format";
 
     export let expenses: Expense[];
-    let selected: number | null = null;
 
-    function handleItemSelect(id: number) {
-        selected = selected === id ? null : id;
+    $: pending = expenses.filter((e) => e.confirmed_at === null && e.refused_at === null);
+    $: finished = expenses.filter((e) => e.confirmed_at !== null || e.refused_at !== null);
+
+    async function reload() {
+        const a = await getExpenseList(fetch);
+        expenses = a;
     }
 
-    async function handleConfirm(id: number) {
+    async function confirm(id: number) {
         try {
             await postExpenseConfirm(id);
+            await reload();
         } catch {
             await goto("/caroco");
         }
     }
 
-    async function handleRefuse(id: number) {
+    async function refuse(id: number) {
         try {
             await postExpenseRefuse(id);
+            await reload();
         } catch {
             await goto("/caroco");
         }
@@ -49,27 +64,67 @@
 </svelte:head>
 
 <Layout tab="list">
-    <List threeLine>
-        {#each expenses as e}
-            <Item on:SMUI:action={() => handleItemSelect(e.id)}>
-                <Text>
-                    <PrimaryText>{e.owed / 100}</PrimaryText>
-                    <SecondaryText>total de {e.paid / 100}</SecondaryText>
-                    <SecondaryText>pago por {e.payer}</SecondaryText>
-                </Text>
-                {#if selected === e.id}
-                    <Meta>
-                        <IconButton class="material-icons" on:click={() => handleRefuse(e.id)}
-                            >close</IconButton
-                        >
-                        <IconButton class="material-icons" on:click={() => handleConfirm(e.id)}
-                            >done</IconButton
-                        >
-                    </Meta>
-                {:else if e.confirmed_at === null && e.refused_at === null}
-                    <Meta class="material-icons">pending</Meta>
-                {/if}
-            </Item>
-        {/each}
-    </List>
+    {#if pending.length > 0}
+        <Group>
+            <Subheader>Pendentes</Subheader>
+            <List threeLine nonInteractive>
+                {#each pending as e}
+                    <Wrapper>
+                        <Item>
+                            <Text>
+                                <PrimaryText>{e.owed / 100}</PrimaryText>
+                                <SecondaryText>total de {e.paid / 100}</SecondaryText>
+                                <SecondaryText>pago por {e.payer}</SecondaryText>
+                            </Text>
+
+                            {#if e.yours}
+                                <Meta class="material-icons">hourglass_empty</Meta>
+                            {:else}
+                                <Meta>
+                                    <Button on:click={() => refuse(e.id)} variant="outlined">
+                                        Nope
+                                    </Button>
+                                    <Button on:click={() => confirm(e.id)} variant="unelevated">
+                                        Ok!
+                                    </Button>
+                                </Meta>
+                            {/if}
+                        </Item>
+                        {#if e.yours}
+                            <Tooltip xPos="center">
+                                Esperando a aceitação terceira.<br />
+                                Acelera a pessoa lá
+                            </Tooltip>
+                        {/if}
+                    </Wrapper>
+                {/each}
+            </List>
+        </Group>
+    {/if}
+    {#if finished.length > 0}
+        <Group>
+            {#if pending.length > 0}
+                <Subheader>Finalizados</Subheader>
+            {/if}
+            <List threeLine nonInteractive>
+                {#each finished as e}
+                    <Item>
+                        <Text>
+                            <span class:finished-text={e.refused_at !== null}>
+                                <PrimaryText>{formatCents(e.owed)}</PrimaryText>
+                                <SecondaryText>{formatCents(e.paid)} total</SecondaryText>
+                                <SecondaryText>{e.payer} pagou</SecondaryText>
+                            </span>
+                        </Text>
+                    </Item>
+                {/each}
+            </List>
+        </Group>
+    {/if}
 </Layout>
+
+<style>
+    .finished-text {
+        text-decoration: line-through;
+    }
+</style>
