@@ -5,6 +5,7 @@
     import Select, { Option } from "@smui/select";
     import Textfield from "@smui/textfield";
     import FormField from "@smui/form-field";
+    import Layout from "../components/layout.svelte";
 
     let payer: Person | null = null;
     let split: Split | null = null;
@@ -40,62 +41,81 @@
     }
 </script>
 
-<form on:submit|preventDefault={handleSubmit}>
-    <FormField>
-        <Select bind:value={payer} label="Pagante">
-            {#each Person.options as person}
-                <Option value={person}>{person}</Option>
-            {/each}
-        </Select>
-    </FormField>
+<svelte:head>
+    <title>gastei pra nóis</title>
+</svelte:head>
 
-    <FormField>
-        <Textfield label="Data" type="date" bind:value={date} />
-    </FormField>
+<Layout tab={null}>
+    <form on:submit|preventDefault={handleSubmit}>
+        <FormField style="width: 100%">
+            <Select style="width: 100%" bind:value={payer} label="Pagante">
+                {#each Person.options as person}
+                    <Option value={person}>{person}</Option>
+                {/each}
+            </Select>
+        </FormField>
 
-    <FormField>
-        <Select bind:value={split} label="Divisão">
-            {#each Split.options as split}
-                <Option value={split}>{split}</Option>
-            {/each}
-        </Select>
-    </FormField>
+        <FormField style="width: 100%">
+            <Textfield style="width: 100%;" abel="Data" type="date" bind:value={date} />
+        </FormField>
 
-    <FormField>
-        <Select bind:value={label} label="Etiqueta">
-            {#each Label.options as person}
-                <Option value={person}>{person}</Option>
-            {/each}
-        </Select>
-    </FormField>
+        <FormField style="width: 100%">
+            <Select style="width: 100%" bind:value={split} label="Divisão">
+                {#each Split.options as split}
+                    <Option value={split}>{split}</Option>
+                {/each}
+            </Select>
+        </FormField>
 
-    <FormField>
-        <Textfield label="Detalhe" type="text" bind:value={detail} />
-    </FormField>
+        <FormField style="width: 100%">
+            <Select style="width: 100%" bind:value={label} label="Etiqueta">
+                {#each Label.options as person}
+                    <Option value={person}>{person}</Option>
+                {/each}
+            </Select>
+        </FormField>
 
-    <FormField>
-        <Textfield
-            label="Valor Pago"
-            type="number"
-            input$min="1"
-            input$max="9999"
-            input$step="0.01"
-            bind:value={paid}
-        />
-    </FormField>
+        <FormField style="width: 100%">
+            <Textfield style="width: 100%" label="Detalhe" type="text" bind:value={detail} />
+        </FormField>
 
-    {#if split === "Arbitrary"}
-        <FormField>
+        <FormField style="width: 100%">
             <Textfield
-                label="Valor Devido"
+                style="width: 100%"
+                label="Valor Pago"
                 type="number"
-                min="1"
-                max="1000"
-                step="0.01"
-                bind:value={owed}
+                input$min="1"
+                input$max="9999"
+                input$step="0.01"
+                bind:value={paid}
             />
         </FormField>
-    {/if}
 
-    <Button variant="raised" type="submit">Vai</Button>
-</form>
+        {#if split === "Arbitrary"}
+            <FormField style="width: 100%">
+                <Textfield
+                    style="width: 100%"
+                    label="Valor Devido"
+                    type="number"
+                    min="1"
+                    max="1000"
+                    step="0.01"
+                    bind:value={owed}
+                />
+            </FormField>
+        {/if}
+
+        <Button variant="raised" type="submit">Vai</Button>
+    </form>
+</Layout>
+
+<style>
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        row-gap: 20px;
+        max-width: 80%;
+        margin: auto;
+    }
+</style>
