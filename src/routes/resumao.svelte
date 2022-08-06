@@ -113,7 +113,7 @@
                         <div class="mdc-typography--overline">Estado de devimento</div>
                         <span class="mdc-typography--body1">
                             {#if summary.owed > 0}
-                                Você é devido {formatCents(summary.owed)} atualmente
+                                Te devem {formatCents(summary.owed)} atualmente
                             {:else if summary.owed < 0}
                                 Você deve {formatCents(-summary.owed)} atualmente
                             {:else}
