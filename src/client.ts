@@ -79,7 +79,7 @@ export async function postSessionConvert() {
     );
 }
 
-export async function getSessionConfirmable(): Promise<number | null> {
+export async function getSessionConfirmable(fetch: LoadEvent["fetch"]): Promise<number | null> {
     return decode200json(
         await fetch(`${URL}/session/confirmable`, { credentials: "include", method: "GET" }),
         z.number().nullable().parse

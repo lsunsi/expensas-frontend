@@ -57,13 +57,21 @@
             await goto("/caroco");
         }
     }
+
+    async function refresh() {
+        try {
+            await reload();
+        } catch (e) {
+            await goto("/caroco");
+        }
+    }
 </script>
 
 <svelte:head>
     <title>os custo tudo</title>
 </svelte:head>
 
-<Layout tab="list">
+<Layout tab="list" on:refresh={refresh} refreshable>
     {#if pending.length > 0}
         <Group>
             <Subheader>Pendentes</Subheader>

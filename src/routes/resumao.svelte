@@ -5,7 +5,8 @@
     export const load: Load = async ({ fetch }) => {
         try {
             const summary = await getSummary(fetch);
-            return { status: 200, props: { summary } };
+            const confirmable = await getSessionConfirmable(fetch);
+            return { status: 200, props: { summary, confirmable } };
         } catch (e) {
             return { status: 302, redirect: "/caroco" };
         }
@@ -19,7 +20,6 @@
     import Card, { Actions, Content } from "@smui/card";
     import Button, { Label } from "@smui/button";
     import { goto } from "$app/navigation";
-    import { onMount } from "svelte";
     import Fab, { Icon } from "@smui/fab";
     import {
         getSessionConfirmable,
@@ -29,14 +29,7 @@
     } from "../client";
 
     export let summary: Summary;
-
-    let confirmable: number | null;
-
-    function pollConfirmable() {
-        getSessionConfirmable()
-            .then((c) => (confirmable = c))
-            .catch(() => goto("/caroco"));
-    }
+    export let confirmable: number | null;
 
     function handleConfirm() {
         confirmable &&
@@ -52,17 +45,21 @@
                 .catch(() => goto("/caroco"));
     }
 
-    onMount(() => {
-        const interval = setInterval(pollConfirmable, 1000);
-        return () => clearInterval(interval);
-    });
+    async function refresh() {
+        try {
+            await getSummary(fetch).then((s) => (summary = s));
+            await getSessionConfirmable(fetch).then((c) => (confirmable = c));
+        } catch (e) {
+            await goto("/caroco");
+        }
+    }
 </script>
 
 <svelte:head>
     <title>resumão dos custo</title>
 </svelte:head>
 
-<Layout tab="home">
+<Layout tab="home" on:refresh={refresh} refreshable>
     <div class="container">
         <div class="paper">
             <Paper variant="unelevated">

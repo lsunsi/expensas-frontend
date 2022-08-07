@@ -1,7 +1,12 @@
 <script lang="ts">
     import TopAppBar, { Row, Section, Title } from "@smui/top-app-bar";
+    import { createEventDispatcher } from "svelte";
+    import IconButton from "@smui/icon-button";
     import Tab, { Icon } from "@smui/tab";
     import TabBar from "@smui/tab-bar";
+    import Button from "@smui/button";
+
+    const dispatch = createEventDispatcher();
 
     type Name = "home" | "list" | "misc";
 
@@ -12,7 +17,9 @@
     ];
 
     export let tab: Name | null;
-    let active = tabs.find((t) => t.name === tab);
+    $: active = tabs.find((t) => t.name === tab);
+
+    export let refreshable = false;
 </script>
 
 <div class="container">
@@ -21,6 +28,13 @@
             <Section>
                 <Title>Expensas</Title>
             </Section>
+            {#if refreshable}
+                <Section align="end">
+                    <IconButton class="material-icons" on:click={() => dispatch("refresh")}>
+                        refresh
+                    </IconButton>
+                </Section>
+            {/if}
         </Row>
     </TopAppBar>
 
