@@ -3,6 +3,8 @@ import { z } from "zod";
 
 const URL = import.meta.env.VITE_SERVER_URL;
 
+const date = z.preprocess((s) => new Date(s), z.date());
+
 export type Person = z.infer<typeof Person>;
 export const Person = z.enum(["Ale", "Lu"]);
 
@@ -104,7 +106,7 @@ const Expense = z.object({
     split: Split,
     label: Label,
     detail: z.string().nullable(),
-    date: z.string(),
+    date: date,
     paid: z.number(),
     owed: z.number(),
     confirmed_at: z.string().nullable(),

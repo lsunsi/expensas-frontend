@@ -13,27 +13,35 @@
 </script>
 
 <script lang="ts">
-    import Tooltip, { Wrapper } from "@smui/tooltip";
     import { goto } from "$app/navigation";
     import { postExpenseConfirm, postExpenseRefuse } from "../client";
-    import List, {
-        Group,
-        Item,
-        Meta,
-        Text,
-        PrimaryText,
-        Subheader,
-        SecondaryText,
-    } from "@smui/list";
+    import { Group, Meta, Subheader } from "@smui/list";
     import Layout from "../components/layout.svelte";
     import type { Expense } from "../client";
     import Button from "@smui/button";
-    import { formatCents, formatPerson, formatLabel } from "../format";
+    import { formatCents, formatPerson, formatLabel, formatSplit } from "../format";
+    import Accordion, { Panel, Header, Content } from "@smui-extra/accordion";
 
     export let expenses: Expense[];
 
-    $: pending = expenses.filter((e) => e.confirmed_at === null && e.refused_at === null);
-    $: finished = expenses.filter((e) => e.confirmed_at !== null || e.refused_at !== null);
+    const isPending = (e: Expense) => e.refused_at === null && e.confirmed_at === null;
+
+    $: pending = expenses.filter(isPending);
+
+    $: groups = expenses
+        .reverse()
+        .filter((e) => !isPending(e))
+        .reduce<[string, Expense[]][]>(([g, ...gs], e) => {
+            const month = e.date.toLocaleString("pt-BR", { month: "long" });
+
+            if (g === undefined) {
+                return [[month, [e]]];
+            } else if (g[0] === month) {
+                return [[month, [...g[1], e]], ...gs];
+            } else {
+                return [[month, [e]], g, ...gs];
+            }
+        }, []);
 
     async function reload() {
         const a = await getExpenseList(fetch);
@@ -72,73 +80,110 @@
 </svelte:head>
 
 <Layout tab="list" on:refresh={refresh} refreshable>
-    {#if pending.length > 0}
-        <Group>
-            <Subheader>Pendentes</Subheader>
-            <List threeLine nonInteractive>
-                {#each pending as e}
-                    <Wrapper>
-                        <Item>
-                            <Text>
-                                <PrimaryText>{formatCents(e.owed)}</PrimaryText>
-                                <SecondaryText>total de {formatCents(e.paid)}</SecondaryText>
-                                <SecondaryText>pago por {formatPerson(e.payer)}</SecondaryText>
-                            </Text>
+    <Accordion>
+        {#if pending.length > 0}
+            <Group>
+                <Subheader>Pendentes</Subheader>
 
-                            {#if e.yours}
-                                <Meta class="material-icons">hourglass_empty</Meta>
-                            {:else}
-                                <Meta>
-                                    <Button on:click={() => refuse(e.id)} variant="outlined">
-                                        Nope
-                                    </Button>
-                                    <Button on:click={() => confirm(e.id)} variant="unelevated">
-                                        Ok!
-                                    </Button>
+                {#each pending as e}
+                    <Panel variant="outlined" color="primary">
+                        <Header>
+                            <span class="header">
+                                <span>{formatLabel(e.label)}</span>
+                                <Meta class="material-icons">
+                                    {#if e.yours}
+                                        hourglass_empty
+                                    {:else}
+                                        priority_high
+                                    {/if}
                                 </Meta>
+                                <span>{formatCents(e.owed)}</span>
+                            </span>
+                        </Header>
+                        <Content>
+                            <div class="pending-content">
+                                <div class="pending-text">
+                                    <div>total de {formatCents(e.paid)}</div>
+                                    <div>pago por {formatPerson(e.payer)}</div>
+                                    <div>no dia {e.date.toLocaleDateString()}</div>
+                                    <div>em divisão {formatSplit(e.split)}</div>
+                                    {#if e.detail !== null}
+                                        <div>detalhes: {e.detail}</div>
+                                    {/if}
+                                </div>
+
+                                {#if !e.yours}
+                                    <div class="pending-actions">
+                                        <Button on:click={() => refuse(e.id)} variant="outlined">
+                                            Nope
+                                        </Button>
+                                        <Button on:click={() => confirm(e.id)} variant="unelevated">
+                                            Ok!
+                                        </Button>
+                                    </div>
+                                {/if}
+                            </div>
+                        </Content>
+                    </Panel>
+                {/each}
+            </Group>
+        {/if}
+
+        {#each groups as [month, group]}
+            <Group>
+                <Subheader><span class="month">{month}</span></Subheader>
+
+                {#each group as e}
+                    <Panel>
+                        <Header>
+                            <span class="header" class:header-refused={e.refused_at !== null}>
+                                <span>{formatLabel(e.label)}</span>
+                                <span>{formatCents(e.owed)}</span>
+                            </span>
+                        </Header>
+                        <Content>
+                            <div>total de {formatCents(e.paid)}</div>
+                            <div>pago por {formatPerson(e.payer)}</div>
+                            <div>no dia {e.date.toLocaleDateString()}</div>
+                            <div>em divisão {formatSplit(e.split)}</div>
+                            {#if e.detail !== null}
+                                <div>detalhes: {e.detail}</div>
                             {/if}
-                        </Item>
-                        {#if e.yours}
-                            <Tooltip xPos="center">
-                                Esperando a aceitação terceira.<br />
-                                Acelera a pessoa lá
-                            </Tooltip>
-                        {/if}
-                    </Wrapper>
+                        </Content>
+                    </Panel>
                 {/each}
-            </List>
-        </Group>
-    {/if}
-    {#if finished.length > 0}
-        <Group>
-            {#if pending.length > 0}
-                <Subheader>Finalizados</Subheader>
-            {/if}
-            <List threeLine nonInteractive>
-                {#each finished as e}
-                    <Wrapper>
-                        <Item>
-                            <Text>
-                                <span class:finished-text={e.refused_at !== null}>
-                                    <PrimaryText>{formatCents(e.owed)}</PrimaryText>
-                                    <SecondaryText>{formatCents(e.paid)} total</SecondaryText>
-                                    <SecondaryText>{e.payer} pagou</SecondaryText>
-                                </span>
-                            </Text>
-                            <Meta>{formatLabel(e.label)}</Meta>
-                        </Item>
-                        {#if e.detail !== null}
-                            <Tooltip xPos="center">{e.detail}</Tooltip>
-                        {/if}
-                    </Wrapper>
-                {/each}
-            </List>
-        </Group>
-    {/if}
+            </Group>
+        {/each}
+    </Accordion>
 </Layout>
 
 <style>
-    .finished-text {
+    .month {
+        text-transform: capitalize;
+    }
+
+    .header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .header-refused {
         text-decoration: line-through;
+    }
+
+    .pending-content {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .pending-text {
+        flex-grow: 1;
+    }
+
+    .pending-actions {
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
     }
 </style>
