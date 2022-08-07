@@ -1,4 +1,4 @@
-import type { Label, Split } from "./client";
+import type { Label, Split, Person } from "./client";
 
 const currency = new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -9,7 +9,28 @@ export function formatCents(cents: number): string {
     return currency.format(cents / 100);
 }
 
-export function translateLabel(label: Label): string {
+
+export function formatPerson(person: Person): string {
+    switch (person) {
+        case "Ale":
+            return "Alê";
+        case "Lu":
+            return "Lu";
+    }
+}
+
+export function formatSplit(split: Split): string {
+    switch (split) {
+        case "Proportional":
+            return "Proporcional";
+        case "Arbitrary":
+            return "Arbitrária";
+        case "Evenly":
+            return "Igualitária";
+    }
+}
+
+export function formatLabel(label: Label): string {
     switch (label) {
         case "Market":
             return "Mercado";
@@ -31,16 +52,5 @@ export function translateLabel(label: Label): string {
             return "Conta de luz";
         case "Furnitance":
             return "Coisas da casa";
-    }
-}
-
-export function translateSplit(split: Split): string {
-    switch (split) {
-        case "Proportional":
-            return "Proporcional";
-        case "Arbitrary":
-            return "Arbitrária";
-        case "Evenly":
-            return "Igualitária";
     }
 }

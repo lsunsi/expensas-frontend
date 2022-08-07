@@ -28,7 +28,7 @@
     import Layout from "../components/layout.svelte";
     import type { Expense } from "../client";
     import Button from "@smui/button";
-    import { formatCents, translateLabel } from "../format";
+    import { formatCents, formatPerson, formatLabel } from "../format";
 
     export let expenses: Expense[];
 
@@ -72,9 +72,9 @@
                     <Wrapper>
                         <Item>
                             <Text>
-                                <PrimaryText>{e.owed / 100}</PrimaryText>
-                                <SecondaryText>total de {e.paid / 100}</SecondaryText>
-                                <SecondaryText>pago por {e.payer}</SecondaryText>
+                                <PrimaryText>{formatCents(e.owed)}</PrimaryText>
+                                <SecondaryText>total de {formatCents(e.paid)}</SecondaryText>
+                                <SecondaryText>pago por {formatPerson(e.payer)}</SecondaryText>
                             </Text>
 
                             {#if e.yours}
@@ -117,7 +117,7 @@
                                     <SecondaryText>{e.payer} pagou</SecondaryText>
                                 </span>
                             </Text>
-                            <Meta>{translateLabel(e.label)}</Meta>
+                            <Meta>{formatLabel(e.label)}</Meta>
                         </Item>
                         {#if e.detail !== null}
                             <Tooltip xPos="center">{e.detail}</Tooltip>
