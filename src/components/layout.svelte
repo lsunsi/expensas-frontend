@@ -37,12 +37,13 @@
 
 <style>
     .container {
+        height: 100%;
         display: flex;
         flex-direction: column;
-        height: 100%;
     }
 
     .slot {
         flex-grow: 1;
+        overflow: scroll;
     }
 </style>
