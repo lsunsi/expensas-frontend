@@ -25,14 +25,22 @@
                 await postExpenseSubmit(
                     payer,
                     "Arbitrary",
-                    paid * 100,
-                    owed * 100,
+                    Math.trunc(paid * 100),
+                    Math.trunc(owed * 100),
                     label,
                     detail,
                     date
                 );
             } else {
-                await postExpenseSubmit(payer, split, paid * 100, null, label, detail, date);
+                await postExpenseSubmit(
+                    payer,
+                    split,
+                    Math.trunc(paid * 100),
+                    null,
+                    label,
+                    detail,
+                    date
+                );
             }
 
             await goto("/resumao");
