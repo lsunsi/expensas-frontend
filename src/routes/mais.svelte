@@ -98,9 +98,9 @@
                     style="width: 100%"
                     label="Valor Devido"
                     type="number"
-                    min="1"
-                    max="1000"
-                    step="0.01"
+                    input$min="1"
+                    input$max={paid}
+                    input$step="0.01"
                     bind:value={owed}
                 />
             </FormField>
