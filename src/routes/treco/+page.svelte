@@ -1,7 +1,7 @@
-<script>
-    import Layout from "../components/layout.svelte";
+<script lang="ts">
+    import Layout from "../../components/layout.svelte";
     import List, { Item, Graphic, Text } from "@smui/list";
-    import { postSessionDrop } from "../client";
+    import { postSessionDrop } from "../../client";
     import { goto } from "$app/navigation";
 
     async function handleLeave() {

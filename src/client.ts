@@ -3,7 +3,7 @@ import { z } from "zod";
 
 const URL = import.meta.env.VITE_SERVER_URL;
 
-const date = z.preprocess((s) => new Date(s), z.date());
+const date = z.preprocess((s: any) => new Date(s), z.date());
 
 export type Person = z.infer<typeof Person>;
 export const Person = z.enum(["Ale", "Lu"]);

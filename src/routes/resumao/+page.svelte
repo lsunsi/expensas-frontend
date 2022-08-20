@@ -1,22 +1,8 @@
-<script lang="ts" context="module">
-    import { getSummary } from "../client";
-    import type { Load } from "./__types/resumao";
-
-    export const load: Load = async ({ fetch }) => {
-        try {
-            const summary = await getSummary(fetch);
-            const confirmable = await getSessionConfirmable(fetch);
-            return { status: 200, props: { summary, confirmable } };
-        } catch (e) {
-            return { status: 302, redirect: "/caroco" };
-        }
-    };
-</script>
-
 <script lang="ts">
-    import Layout from "../components/layout.svelte";
+    import type { PageData } from "./$types";
+    import Layout from "../../components/layout.svelte";
     import Paper, { Title } from "@smui/paper";
-    import { formatCents } from "../format";
+    import { formatCents } from "../../format";
     import Card, { Actions, Content } from "@smui/card";
     import Button, { Label } from "@smui/button";
     import { goto } from "$app/navigation";
@@ -25,11 +11,14 @@
         getSessionConfirmable,
         postSessionConfirm,
         postSessionRefuse,
+        getSummary,
         type Summary,
-    } from "../client";
+    } from "../../client";
 
-    export let summary: Summary;
-    export let confirmable: number | null;
+    export let data: PageData;
+
+    let summary: Summary = data.summary;
+    let confirmable: number | null = data.confirmable;
 
     function handleConfirm() {
         confirmable &&

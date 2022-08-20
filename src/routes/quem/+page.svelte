@@ -1,6 +1,6 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { Person, postSessionAsk } from "../client";
+    import { Person, postSessionAsk } from "../../client";
     import Button from "@smui/button";
     import Paper, { Title as PaperTitle } from "@smui/paper";
 

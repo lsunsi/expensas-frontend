@@ -9,7 +9,6 @@ export function formatCents(cents: number): string {
     return currency.format(cents / 100);
 }
 
-
 export function formatPerson(person: Person): string {
     switch (person) {
         case "Ale":

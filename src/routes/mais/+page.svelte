@@ -1,12 +1,12 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import Button from "@smui/button";
-    import { Person, Label, postExpenseSubmit, Split } from "../client";
+    import { Person, Label, postExpenseSubmit, Split } from "../../client";
     import Select, { Option } from "@smui/select";
     import Textfield from "@smui/textfield";
     import FormField from "@smui/form-field";
-    import Layout from "../components/layout.svelte";
-    import { formatLabel, formatPerson, formatSplit } from "../format";
+    import Layout from "../../components/layout.svelte";
+    import { formatLabel, formatPerson, formatSplit } from "../../format";
 
     let payer: Person | null = null;
     let split: Split | null = null;

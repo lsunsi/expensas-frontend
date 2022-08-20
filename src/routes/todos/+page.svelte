@@ -1,28 +1,17 @@
-<script lang="ts" context="module">
-    import { getExpenseList } from "../client";
-    import type { Load } from "./__types/todos";
-
-    export const load: Load = async ({ fetch }) => {
-        try {
-            const expenses = await getExpenseList(fetch);
-            return { status: 200, props: { expenses } };
-        } catch (e) {
-            return { status: 302, redirect: "/caroco" };
-        }
-    };
-</script>
-
 <script lang="ts">
+    import type { PageData } from "./$types";
     import { goto } from "$app/navigation";
-    import { postExpenseConfirm, postExpenseRefuse } from "../client";
+    import { postExpenseConfirm, postExpenseRefuse, getExpenseList } from "../../client";
     import { Group, Meta, Subheader } from "@smui/list";
-    import Layout from "../components/layout.svelte";
-    import type { Expense } from "../client";
+    import Layout from "../../components/layout.svelte";
+    import type { Expense } from "../../client";
     import Button from "@smui/button";
-    import { formatCents, formatPerson, formatLabel, formatSplit } from "../format";
+    import { formatCents, formatPerson, formatLabel, formatSplit } from "../../format";
     import Accordion, { Panel, Header, Content } from "@smui-extra/accordion";
 
-    export let expenses: Expense[];
+    export let data: PageData;
+
+    $: expenses = data.expenses;
 
     const isPending = (e: Expense) => e.refused_at === null && e.confirmed_at === null;
 

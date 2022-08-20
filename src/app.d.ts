@@ -1,11 +1,7 @@
 /// <reference types="@sveltejs/kit" />
 
 declare namespace App {
-    // interface Locals {}
-    // interface Platform {}
-    // interface Stuff {}
-
-    interface Session {
+    interface Locals {
         readonly ask: bool;
         readonly ses: bool;
     }

@@ -4,7 +4,6 @@
     import IconButton from "@smui/icon-button";
     import Tab, { Icon } from "@smui/tab";
     import TabBar from "@smui/tab-bar";
-    import Button from "@smui/button";
 
     const dispatch = createEventDispatcher();
 

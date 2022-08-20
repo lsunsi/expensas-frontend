@@ -6,7 +6,7 @@
         postSessionCancel,
         postSessionConvert,
         SessionState,
-    } from "../client";
+    } from "../../client";
     import CircularProgress from "@smui/circular-progress";
     import Button from "@smui/button";
 
