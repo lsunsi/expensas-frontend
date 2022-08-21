@@ -106,7 +106,12 @@
 
         {#each list.months as m}
             <Group>
-                <Subheader><span class="month">{formatMonth(m.n)}</span></Subheader>
+                <Subheader>
+                    <span class="header">
+                        <span class="month">{formatMonth(m.n)}</span>
+                        {formatCents(m.spent)}
+                    </span>
+                </Subheader>
 
                 {#each m.items as i}
                     {#if i.t === ListItemKind.enum.Expense}
