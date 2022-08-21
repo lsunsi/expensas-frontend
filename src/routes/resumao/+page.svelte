@@ -100,10 +100,10 @@
                         <Content>
                             <div class="mdc-typography--overline">Estado de devimento</div>
                             <span class="mdc-typography--body1">
-                                {#if summary.owed > 0}
-                                    Te devem {formatCents(summary.owed)} atualmente
-                                {:else if summary.owed < 0}
-                                    Você deve {formatCents(-summary.owed)} atualmente
+                                {#if summary.owed_definitely > 0}
+                                    Te devem {formatCents(summary.owed_definitely)} atualmente
+                                {:else if summary.owed_definitely < 0}
+                                    Você deve {formatCents(-summary.owed_definitely)} atualmente
                                 {:else}
                                     Ninguém deve ninguém
                                 {/if}

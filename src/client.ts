@@ -98,29 +98,6 @@ export async function getSessionState(): Promise<SessionState> {
     );
 }
 
-export type Expense = z.infer<typeof Expense>;
-const Expense = z.object({
-    id: z.number(),
-    yours: z.boolean(),
-    payer: Person,
-    split: Split,
-    label: Label,
-    detail: z.string().nullable(),
-    date: date,
-    paid: z.number(),
-    owed: z.number(),
-    confirmed_at: z.string().nullable(),
-    refused_at: z.string().nullable(),
-    created_at: z.string(),
-});
-
-export async function getExpenseList(fetch: LoadEvent["fetch"]): Promise<Expense[]> {
-    return decode200json(
-        await fetch(`${URL}/expense/list`, { credentials: "include", method: "GET" }),
-        Expense.array().parse
-    );
-}
-
 export async function postExpenseSubmit(
     payer: Person,
     split: Split,
@@ -158,7 +135,8 @@ export async function postExpenseRefuse(id: number) {
 export type Summary = z.infer<typeof Summary>;
 const Summary = z.object({
     me: Person,
-    owed: z.number(),
+    owed_maybe: z.number(),
+    owed_definitely: z.number(),
     pending_you: z.number(),
     pending_other: z.number(),
 });
@@ -167,6 +145,60 @@ export async function getSummary(fetch: LoadEvent["fetch"]): Promise<Summary> {
     return decode200json(
         await fetch(`${URL}/summary`, { credentials: "include", method: "GET" }),
         Summary.parse
+    );
+}
+
+export type ListExpense = z.infer<typeof ListExpense>;
+const ListExpense = z.object({
+    id: z.number(),
+    yours: z.boolean(),
+    payer: Person,
+    split: Split,
+    label: Label,
+    detail: z.string().nullable(),
+    date: date,
+    paid: z.number(),
+    spent: z.number(),
+    confirmed: z.boolean(),
+    refused: z.boolean(),
+});
+
+export type ListTransfer = z.infer<typeof ListTransfer>;
+const ListTransfer = z.object({
+    id: z.number(),
+    yours: z.boolean(),
+    date: date,
+    amount: z.number(),
+    confirmed: z.boolean(),
+    refused: z.boolean(),
+});
+
+export type ListItemKind = z.infer<typeof ListItemKind>;
+export const ListItemKind = z.enum(["Expense", "Transfer"]);
+
+export type ListItem = z.infer<typeof ListItem>;
+const ListItem = z.discriminatedUnion("t", [
+    z.object({ t: z.literal(ListItemKind.enum.Expense), c: ListExpense }),
+    z.object({ t: z.literal(ListItemKind.enum.Transfer), c: ListTransfer }),
+]);
+
+export type ListMonth = z.infer<typeof ListMonth>;
+const ListMonth = z.object({
+    n: z.number(),
+    spent: z.number(),
+    items: ListItem.array(),
+});
+
+export type ListResponse = z.infer<typeof ListResponse>;
+const ListResponse = z.object({
+    pendings: ListItem.array(),
+    months: ListMonth.array(),
+});
+
+export async function getList(fetch: LoadEvent["fetch"]): Promise<ListResponse> {
+    return decode200json(
+        await fetch(`${URL}/list`, { credentials: "include", method: "GET" }),
+        ListResponse.parse
     );
 }
 

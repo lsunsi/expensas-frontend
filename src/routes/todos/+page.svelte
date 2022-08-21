@@ -1,40 +1,18 @@
 <script lang="ts">
     import type { PageData } from "./$types";
     import { goto } from "$app/navigation";
-    import { postExpenseConfirm, postExpenseRefuse, getExpenseList } from "../../client";
+    import { postExpenseConfirm, postExpenseRefuse, getList, ListItemKind } from "../../client";
     import { Group, Meta, Subheader } from "@smui/list";
     import Layout from "../../components/layout.svelte";
-    import type { Expense } from "../../client";
     import Button from "@smui/button";
-    import { formatCents, formatPerson, formatLabel, formatSplit } from "../../format";
+    import { formatCents, formatPerson, formatLabel, formatSplit, formatMonth } from "../../format";
     import Accordion, { Panel, Header, Content } from "@smui-extra/accordion";
 
     export let data: PageData;
-
-    $: expenses = data.expenses;
-
-    const isPending = (e: Expense) => e.refused_at === null && e.confirmed_at === null;
-
-    $: pending = expenses.filter(isPending);
-
-    $: groups = expenses
-        .reverse()
-        .filter((e) => !isPending(e))
-        .reduce<[string, Expense[]][]>(([g, ...gs], e) => {
-            const month = e.date.toLocaleString("pt-BR", { month: "long" });
-
-            if (g === undefined) {
-                return [[month, [e]]];
-            } else if (g[0] === month) {
-                return [[month, [...g[1], e]], ...gs];
-            } else {
-                return [[month, [e]], g, ...gs];
-            }
-        }, []);
+    $: list = data.list;
 
     async function reload() {
-        const a = await getExpenseList(fetch);
-        expenses = a;
+        list = await getList(fetch);
     }
 
     async function confirm(id: number) {
@@ -70,76 +48,86 @@
 
 <Layout tab="list" on:refresh={refresh} refreshable>
     <Accordion>
-        {#if pending.length > 0}
+        {#if list.pendings.length > 0}
             <Group>
                 <Subheader>Pendentes</Subheader>
 
-                {#each pending as e}
-                    <Panel variant="outlined" color="primary">
-                        <Header>
-                            <span class="header">
-                                <span>{formatLabel(e.label)}</span>
-                                <Meta class="material-icons">
-                                    {#if e.yours}
-                                        hourglass_empty
-                                    {:else}
-                                        priority_high
-                                    {/if}
-                                </Meta>
-                                <span>{formatCents(e.owed)}</span>
-                            </span>
-                        </Header>
-                        <Content>
-                            <div class="pending-content">
-                                <div class="pending-text">
-                                    <div>total de {formatCents(e.paid)}</div>
-                                    <div>pago por {formatPerson(e.payer)}</div>
-                                    <div>no dia {e.date.toLocaleDateString()}</div>
-                                    <div>em divisão {formatSplit(e.split)}</div>
-                                    {#if e.detail !== null}
-                                        <div>detalhes: {e.detail}</div>
+                {#each list.pendings as e}
+                    {#if e.t === ListItemKind.enum.Expense}
+                        <Panel variant="outlined" color="primary">
+                            <Header>
+                                <span class="header">
+                                    <span>{formatLabel(e.c.label)}</span>
+                                    <Meta class="material-icons">
+                                        {#if e.c.yours}
+                                            hourglass_empty
+                                        {:else}
+                                            priority_high
+                                        {/if}
+                                    </Meta>
+                                    <span>{formatCents(e.c.spent)}</span>
+                                </span>
+                            </Header>
+                            <Content>
+                                <div class="pending-content">
+                                    <div class="pending-text">
+                                        <div>total de {formatCents(e.c.paid)}</div>
+                                        <div>pago por {formatPerson(e.c.payer)}</div>
+                                        <div>no dia {e.c.date.toLocaleDateString()}</div>
+                                        <div>em divisão {formatSplit(e.c.split)}</div>
+                                        {#if e.c.detail !== null}
+                                            <div>detalhes: {e.c.detail}</div>
+                                        {/if}
+                                    </div>
+
+                                    {#if !e.c.yours}
+                                        <div class="pending-actions">
+                                            <Button
+                                                on:click={() => refuse(e.c.id)}
+                                                variant="outlined"
+                                            >
+                                                Nope
+                                            </Button>
+                                            <Button
+                                                on:click={() => confirm(e.c.id)}
+                                                variant="unelevated"
+                                            >
+                                                Ok!
+                                            </Button>
+                                        </div>
                                     {/if}
                                 </div>
-
-                                {#if !e.yours}
-                                    <div class="pending-actions">
-                                        <Button on:click={() => refuse(e.id)} variant="outlined">
-                                            Nope
-                                        </Button>
-                                        <Button on:click={() => confirm(e.id)} variant="unelevated">
-                                            Ok!
-                                        </Button>
-                                    </div>
-                                {/if}
-                            </div>
-                        </Content>
-                    </Panel>
+                            </Content>
+                        </Panel>
+                    {/if}
                 {/each}
             </Group>
         {/if}
 
-        {#each groups as [month, group]}
+        {#each list.months as m}
             <Group>
-                <Subheader><span class="month">{month}</span></Subheader>
+                <Subheader><span class="month">{formatMonth(m.n)}</span></Subheader>
 
-                {#each group as e}
-                    <Panel>
-                        <Header>
-                            <span class="header" class:header-refused={e.refused_at !== null}>
-                                <span>{formatLabel(e.label)}</span>
-                                <span>{formatCents(e.owed)}</span>
-                            </span>
-                        </Header>
-                        <Content>
-                            <div>total de {formatCents(e.paid)}</div>
-                            <div>pago por {formatPerson(e.payer)}</div>
-                            <div>no dia {e.date.toLocaleDateString()}</div>
-                            <div>em divisão {formatSplit(e.split)}</div>
-                            {#if e.detail !== null}
-                                <div>detalhes: {e.detail}</div>
-                            {/if}
-                        </Content>
-                    </Panel>
+                {#each m.items as i}
+                    {#if i.t === ListItemKind.enum.Expense}
+                        <Panel>
+                            <Header>
+                                <span class="header" class:header-refused={i.c.refused}>
+                                    <span>{formatLabel(i.c.label)}</span>
+                                    <span>{formatCents(i.c.spent)}</span>
+                                </span>
+                            </Header>
+                            <Content>
+                                <div>total de {formatCents(i.c.paid)}</div>
+                                <div>pago por {formatPerson(i.c.payer)}</div>
+                                <div>no dia {i.c.date.toLocaleDateString()}</div>
+                                <div>em divisão {formatSplit(i.c.split)}</div>
+                                {#if i.c.detail !== null}
+                                    <div>detalhes: {i.c.detail}</div>
+                                {/if}
+                            </Content>
+                        </Panel>
+                    {/if}
                 {/each}
             </Group>
         {/each}
