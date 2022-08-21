@@ -1,7 +1,14 @@
 <script lang="ts">
     import type { PageData } from "./$types";
     import { goto } from "$app/navigation";
-    import { postExpenseConfirm, postExpenseRefuse, getList, ListItemKind } from "../../client";
+    import {
+        postExpenseConfirm,
+        postExpenseRefuse,
+        getList,
+        ListItemKind,
+        postTransferConfirm,
+        postTransferRefuse,
+    } from "../../client";
     import { Meta } from "@smui/list";
     import Layout from "../../components/layout.svelte";
     import Button from "@smui/button";
@@ -25,7 +32,7 @@
         list = await getList(fetch);
     }
 
-    async function confirm(id: number) {
+    async function confirmExpense(id: number) {
         try {
             await postExpenseConfirm(id);
             await reload();
@@ -34,9 +41,27 @@
         }
     }
 
-    async function refuse(id: number) {
+    async function refuseExpense(id: number) {
         try {
             await postExpenseRefuse(id);
+            await reload();
+        } catch {
+            await goto("/caroco");
+        }
+    }
+
+    async function confirmTransfer(id: number) {
+        try {
+            await postTransferConfirm(id);
+            await reload();
+        } catch {
+            await goto("/caroco");
+        }
+    }
+
+    async function refuseTransfer(id: number) {
+        try {
+            await postTransferRefuse(id);
             await reload();
         } catch {
             await goto("/caroco");
@@ -60,8 +85,8 @@
     {#if list.pendings.length > 0}
         <Accordion style="margin: 8px">
             {#each list.pendings as e}
-                {#if e.t === ListItemKind.enum.Expense}
-                    <Panel variant="outlined" color="primary">
+                <Panel variant="outlined" color="primary">
+                    {#if e.t === ListItemKind.enum.Expense}
                         <Header>
                             <span class="header">
                                 <span>{formatLabel(e.c.label)}</span>
@@ -89,11 +114,14 @@
 
                                 {#if !e.c.yours}
                                     <div class="pending-actions">
-                                        <Button on:click={() => refuse(e.c.id)} variant="outlined">
+                                        <Button
+                                            on:click={() => refuseExpense(e.c.id)}
+                                            variant="outlined"
+                                        >
                                             Nope
                                         </Button>
                                         <Button
-                                            on:click={() => confirm(e.c.id)}
+                                            on:click={() => confirmExpense(e.c.id)}
                                             variant="unelevated"
                                         >
                                             Ok!
@@ -102,8 +130,47 @@
                                 {/if}
                             </div>
                         </Content>
-                    </Panel>
-                {/if}
+                    {:else if e.t === ListItemKind.enum.Transfer}
+                        <Header>
+                            <span class="header">
+                                <span>Transferência</span>
+                                <Meta class="material-icons">
+                                    {#if e.c.yours}
+                                        hourglass_empty
+                                    {:else}
+                                        priority_high
+                                    {/if}
+                                </Meta>
+                                <span>{formatCents(e.c.amount)}</span>
+                            </span>
+                        </Header>
+                        <Content>
+                            <div class="pending-content">
+                                <div class="pending-text">
+                                    {#if e.c.yours}você enviou{:else}você recebeu{/if}
+                                    <span>no dia {e.c.date.toLocaleDateString()}</span>
+                                </div>
+
+                                {#if !e.c.yours}
+                                    <div class="pending-actions">
+                                        <Button
+                                            on:click={() => refuseTransfer(e.c.id)}
+                                            variant="outlined"
+                                        >
+                                            Nope
+                                        </Button>
+                                        <Button
+                                            on:click={() => confirmTransfer(e.c.id)}
+                                            variant="unelevated"
+                                        >
+                                            Ok!
+                                        </Button>
+                                    </div>
+                                {/if}
+                            </div>
+                        </Content>
+                    {/if}
+                </Panel>
             {/each}
         </Accordion>
     {/if}
@@ -140,6 +207,26 @@
                                         {#if i.c.detail !== null}
                                             <div>detalhes: {i.c.detail}</div>
                                         {/if}
+                                    </Content>
+                                </Panel>
+                            {:else if i.t === ListItemKind.enum.Transfer}
+                                <Panel>
+                                    <Header>
+                                        <span class="header" class:header-refused={i.c.refused}>
+                                            <span>Transferência</span>
+                                            <Meta class="material-icons">
+                                                {#if i.c.yours}north_east{:else}south_west{/if}
+                                            </Meta>
+                                        </span>
+                                    </Header>
+                                    <Content>
+                                        <div class="transfer-content">
+                                            <div>
+                                                {#if i.c.yours}você enviou{:else}você recebeu{/if}
+                                                <span>no dia {i.c.date.toLocaleDateString()}</span>
+                                            </div>
+                                            <span>{formatCents(i.c.amount)}</span>
+                                        </div>
                                     </Content>
                                 </Panel>
                             {/if}
@@ -179,5 +266,10 @@
         display: flex;
         flex-direction: column;
         row-gap: 10px;
+    }
+
+    .transfer-content {
+        display: flex;
+        justify-content: space-between;
     }
 </style>

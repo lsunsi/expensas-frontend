@@ -1,12 +1,10 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import Button from "@smui/button";
-    import { Person, Label, Split, postTransferSubmit } from "../../client";
-    import Select, { Option } from "@smui/select";
+    import { postTransferSubmit } from "../../client";
     import Textfield from "@smui/textfield";
     import FormField from "@smui/form-field";
     import Layout from "../../components/layout.svelte";
-    import { formatLabel, formatPerson, formatSplit } from "../../format";
 
     let amount: number | null = null;
     let date: string = new Date().toISOString().slice(0, 10);
