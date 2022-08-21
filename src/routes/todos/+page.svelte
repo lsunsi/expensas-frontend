@@ -18,10 +18,12 @@
     export let data: PageData;
     $: list = data.list;
 
-    const opens: { [n: number]: boolean } = {};
+    const opensMonth: { [n: number]: boolean } = {};
+    const opensExpenses: { [n: number]: boolean } = {};
+    const opensTransfers: { [n: number]: boolean } = {};
 
     const setFirstMonthOpen = () => {
-        opens[list.months[0].n] = true;
+        opensMonth[list.months[0].n] = true;
     };
 
     $: if (list.pendings.length === 0 && list.months.length > 0) {
@@ -88,7 +90,7 @@
                 <Panel variant="outlined" color="primary">
                     {#if e.t === ListItemKind.enum.Expense}
                         <Header>
-                            <span class="header">
+                            <span class="flex-row-space-between">
                                 <span>{formatLabel(e.c.label)}</span>
                                 <Meta class="material-icons">
                                     {#if e.c.yours}
@@ -132,7 +134,7 @@
                         </Content>
                     {:else if e.t === ListItemKind.enum.Transfer}
                         <Header>
-                            <span class="header">
+                            <span class="flex-row-space-between">
                                 <span>Transferência</span>
                                 <Meta class="material-icons">
                                     {#if e.c.yours}
@@ -177,12 +179,12 @@
 
     <Accordion>
         {#each list.months as m}
-            <Panel bind:open={opens[m.n]}>
+            <Panel bind:open={opensMonth[m.n]}>
                 <Header>
-                    <span class="header">
+                    <span class="flex-row-space-between">
                         <span class="month">{formatMonth(m.n)}</span>
 
-                        {#if !opens[m.n]}
+                        {#if !opensMonth[m.n]}
                             {formatCents(m.spent)}
                         {/if}
                     </span>
@@ -192,27 +194,48 @@
                     <Accordion>
                         {#each m.items as i}
                             {#if i.t === ListItemKind.enum.Expense}
-                                <Panel>
+                                <Panel
+                                    bind:open={opensExpenses[i.c.id]}
+                                    color={opensExpenses[i.c.id] ? "primary" : ""}
+                                >
                                     <Header>
-                                        <span class="header" class:header-refused={i.c.refused}>
-                                            <span>{formatLabel(i.c.label)}</span>
+                                        <span
+                                            class="flex-row-space-between"
+                                            class:header-refused={i.c.refused}
+                                        >
+                                            <span>
+                                                {#if opensExpenses[i.c.id] && i.c.detail}
+                                                    {i.c.detail}
+                                                {:else}
+                                                    {formatLabel(i.c.label)}
+                                                {/if}
+                                            </span>
                                             <span>{formatCents(i.c.spent)}</span>
                                         </span>
                                     </Header>
                                     <Content>
-                                        <div>total de {formatCents(i.c.paid)}</div>
-                                        <div>pago por {formatPerson(i.c.payer)}</div>
-                                        <div>no dia {i.c.date.toLocaleDateString()}</div>
-                                        <div>em divisão {formatSplit(i.c.split)}</div>
-                                        {#if i.c.detail !== null}
-                                            <div>detalhes: {i.c.detail}</div>
-                                        {/if}
+                                        <div class="flex-row-space-between">
+                                            <div>
+                                                <div>pago por {formatPerson(i.c.payer)}</div>
+                                                <div>{i.c.date.toLocaleDateString()}</div>
+                                            </div>
+                                            <div style="text-align: right">
+                                                <div>{formatCents(i.c.paid)}</div>
+                                                <div>{formatSplit(i.c.split)}</div>
+                                            </div>
+                                        </div>
                                     </Content>
                                 </Panel>
                             {:else if i.t === ListItemKind.enum.Transfer}
-                                <Panel>
+                                <Panel
+                                    bind:open={opensTransfers[i.c.id]}
+                                    color={opensTransfers[i.c.id] ? "primary" : ""}
+                                >
                                     <Header>
-                                        <span class="header" class:header-refused={i.c.refused}>
+                                        <span
+                                            class="flex-row-space-between"
+                                            class:header-refused={i.c.refused}
+                                        >
                                             <span>Transferência</span>
                                             <Meta class="material-icons">
                                                 {#if i.c.yours}north_east{:else}south_west{/if}
@@ -220,12 +243,14 @@
                                         </span>
                                     </Header>
                                     <Content>
-                                        <div class="transfer-content">
+                                        <div class="flex-row-space-between">
                                             <div>
-                                                {#if i.c.yours}você enviou{:else}você recebeu{/if}
-                                                <span>no dia {i.c.date.toLocaleDateString()}</span>
+                                                <div>
+                                                    {#if i.c.yours}você enviou{:else}você recebeu{/if}
+                                                </div>
+                                                <div>{i.c.date.toLocaleDateString()}</div>
                                             </div>
-                                            <span>{formatCents(i.c.amount)}</span>
+                                            <div>{formatCents(i.c.amount)}</div>
                                         </div>
                                     </Content>
                                 </Panel>
@@ -241,12 +266,6 @@
 <style>
     .month {
         text-transform: capitalize;
-    }
-
-    .header {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
     }
 
     .header-refused {
@@ -268,8 +287,9 @@
         row-gap: 10px;
     }
 
-    .transfer-content {
+    .flex-row-space-between {
         display: flex;
+        flex-direction: row;
         justify-content: space-between;
     }
 </style>

@@ -132,11 +132,7 @@ export async function postExpenseRefuse(id: number) {
     );
 }
 
-
-export async function postTransferSubmit(
-    amount: number,
-    date: string
-) {
+export async function postTransferSubmit(amount: number, date: string) {
     const body = JSON.stringify({ amount, date });
     const headers = { "Content-Type": "application/json", Accept: "application/json" };
 
