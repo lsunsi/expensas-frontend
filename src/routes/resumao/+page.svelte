@@ -81,7 +81,7 @@
                             <Content>
                                 <div class="mdc-typography--overline">Novos gastos</div>
                                 <span class="mdc-typography--body1">
-                                    Faltam {summary.pending_you} gastos pra você avaliar
+                                    Faltam {summary.pending_you} itens pra você avaliar
                                 </span>
                             </Content>
 
@@ -102,10 +102,31 @@
                             <span class="mdc-typography--body1">
                                 {#if summary.owed_definitely > 0}
                                     Te devem {formatCents(summary.owed_definitely)} atualmente
+                                    <div class="mdc-typography--body2">
+                                        {#if summary.owed_maybe > 0}
+                                            mais {formatCents(summary.owed_maybe)} provavelmente
+                                        {:else if summary.owed_maybe < 0}
+                                            menos {formatCents(-summary.owed_maybe)} provavelmente
+                                        {/if}
+                                    </div>
                                 {:else if summary.owed_definitely < 0}
                                     Você deve {formatCents(-summary.owed_definitely)} atualmente
+                                    <div class="mdc-typography--body2">
+                                        {#if summary.owed_maybe > 0}
+                                            menos {formatCents(summary.owed_maybe)} provavelmente
+                                        {:else if summary.owed_maybe < 0}
+                                            mais {formatCents(-summary.owed_maybe)} provavelmente
+                                        {/if}
+                                    </div>
                                 {:else}
                                     Ninguém deve ninguém
+                                    <div class="mdc-typography--body2">
+                                        {#if summary.owed_maybe > 0}
+                                            mas vão te dever {formatCents(summary.owed_maybe)} provavelmente
+                                        {:else if summary.owed_maybe < 0}
+                                            mas você vai dever {formatCents(-summary.owed_maybe)} provavelmente
+                                        {/if}
+                                    </div>
                                 {/if}
                             </span>
                         </Content>
@@ -118,7 +139,7 @@
                             <Content>
                                 <div class="mdc-typography--overline">Gastos pendentes</div>
                                 <span class="mdc-typography--body1">
-                                    Você lançou {summary.pending_other} gastos que não foram avaliados
+                                    Você lançou {summary.pending_other} itens que não foram avaliados
                                     ainda
                                 </span>
                             </Content>
