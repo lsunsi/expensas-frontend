@@ -132,6 +132,36 @@ export async function postExpenseRefuse(id: number) {
     );
 }
 
+
+export async function postTransferSubmit(
+    amount: number,
+    date: string
+) {
+    const body = JSON.stringify({ amount, date });
+    const headers = { "Content-Type": "application/json", Accept: "application/json" };
+
+    return decode200(
+        await fetch(`${URL}/transfer/submit`, {
+            credentials: "include",
+            method: "POST",
+            headers,
+            body,
+        })
+    );
+}
+
+export async function postTransferConfirm(id: number) {
+    return decode200(
+        await fetch(`${URL}/transfer/confirm/${id}`, { credentials: "include", method: "POST" })
+    );
+}
+
+export async function postTransferRefuse(id: number) {
+    return decode200(
+        await fetch(`${URL}/transfer/refuse/${id}`, { credentials: "include", method: "POST" })
+    );
+}
+
 export type Summary = z.infer<typeof Summary>;
 const Summary = z.object({
     me: Person,

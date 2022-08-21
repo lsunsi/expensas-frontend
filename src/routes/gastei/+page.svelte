@@ -51,7 +51,7 @@
 </script>
 
 <svelte:head>
-    <title>gastei pra nóis</title>
+    <title>gastemos</title>
 </svelte:head>
 
 <Layout tab={null}>

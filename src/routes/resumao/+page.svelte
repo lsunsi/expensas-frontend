@@ -7,6 +7,7 @@
     import Button, { Label } from "@smui/button";
     import { goto } from "$app/navigation";
     import Fab, { Icon } from "@smui/fab";
+    import Tooltip, { Wrapper } from "@smui/tooltip";
     import {
         getSessionConfirmable,
         postSessionConfirm,
@@ -19,6 +20,8 @@
 
     let summary: Summary = data.summary;
     let confirmable: number | null = data.confirmable;
+
+    let launch = false;
 
     function handleConfirm() {
         confirmable &&
@@ -150,9 +153,26 @@
         </div>
 
         <div class="add">
-            <Fab color="primary" href="/mais">
-                <Icon class="material-icons">add</Icon>
-            </Fab>
+            <Wrapper>
+                <Fab color="primary" href="/gastei" exited={!launch}>
+                    <Icon class="material-icons">shopping_bag</Icon>
+                </Fab>
+                <Tooltip xPos="start" yPos="above">gasto</Tooltip>
+            </Wrapper>
+
+            <Wrapper>
+                <Fab color="primary" on:click={() => (launch = true)} mini exited={launch}>
+                    <Icon class="material-icons">add</Icon>
+                </Fab>
+                <Tooltip xPos="start" yPos="above">Lançar</Tooltip>
+            </Wrapper>
+
+            <Wrapper>
+                <Fab color="primary" href="/transferi" exited={!launch}>
+                    <Icon class="material-icons">payments</Icon>
+                </Fab>
+                <Tooltip xPos="start" yPos="above">transferência</Tooltip>
+            </Wrapper>
         </div>
     </div>
 </Layout>
