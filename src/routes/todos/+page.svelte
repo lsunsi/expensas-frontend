@@ -14,6 +14,8 @@
     import Button from "@smui/button";
     import { formatCents, formatPerson, formatLabel, formatSplit, formatMonth } from "../../format";
     import Accordion, { Panel, Header, Content } from "@smui-extra/accordion";
+    import Switch from "@smui/switch";
+    import FormField from "@smui/form-field";
 
     export let data: PageData;
     $: list = data.list;
@@ -25,6 +27,8 @@
     const setFirstMonthOpen = () => {
         opensMonth[list.months[0].n] = true;
     };
+
+    let mine = true;
 
     $: if (list.pendings.length === 0 && list.months.length > 0) {
         setFirstMonthOpen();
@@ -76,6 +80,11 @@
 </svelte:head>
 
 <Layout tab="list">
+    <FormField slot="tool" align="end">
+        <Switch bind:checked={mine} icons={false} color="secondary" />
+        <span slot="label">{mine ? "Meu" : "Nosso"}</span>
+    </FormField>
+
     {#if list.pendings.length > 0}
         <Accordion style="margin: 8px">
             {#each list.pendings as e}
@@ -91,7 +100,7 @@
                                         priority_high
                                     {/if}
                                 </Meta>
-                                <span>{formatCents(e.c.spent)}</span>
+                                <span>{formatCents(mine ? e.c.spent : e.c.paid)}</span>
                             </span>
                         </Header>
                         <Content>
@@ -177,7 +186,7 @@
                         <span class="month">{formatMonth(m.n)}</span>
 
                         {#if !opensMonth[m.n]}
-                            {formatCents(m.spent)}
+                            {formatCents(mine ? m.spent_me : m.spent_we)}
                         {/if}
                     </span>
                 </Header>
@@ -202,7 +211,9 @@
                                                     {formatLabel(i.c.label)}
                                                 {/if}
                                             </span>
-                                            <span>{formatCents(i.c.spent)}</span>
+                                            <span>
+                                                {formatCents(mine ? i.c.spent : i.c.paid)}
+                                            </span>
                                         </span>
                                     </Header>
                                     <Content>
@@ -212,7 +223,9 @@
                                                 <div>{i.c.date.toLocaleDateString()}</div>
                                             </div>
                                             <div style="text-align: right">
-                                                <div>{formatCents(i.c.paid)}</div>
+                                                <div>
+                                                    {formatCents(mine ? i.c.paid : i.c.spent)}
+                                                </div>
                                                 <div>{formatSplit(i.c.split)}</div>
                                             </div>
                                         </div>

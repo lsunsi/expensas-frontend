@@ -21,6 +21,10 @@
             <Section>
                 <Title>Expensas</Title>
             </Section>
+
+            <Section align="end">
+                <slot name="tool" />
+            </Section>
         </Row>
     </TopAppBar>
 

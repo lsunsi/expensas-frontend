@@ -221,7 +221,8 @@ const ListItem = z.discriminatedUnion("t", [
 export type ListMonth = z.infer<typeof ListMonth>;
 const ListMonth = z.object({
     n: z.number(),
-    spent: z.number(),
+    spent_me: z.number(),
+    spent_we: z.number(),
     items: ListItem.array(),
 });
 
