@@ -1,23 +1,42 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import Button from "@smui/button";
-    import { Person, Label, postExpenseSubmit, Split } from "../../client";
+    import { Person, Label, postExpenseSubmit, Split, getExpenseSplitrecc } from "../../client";
     import Select, { Option } from "@smui/select";
     import Textfield from "@smui/textfield";
     import FormField from "@smui/form-field";
     import Layout from "../../components/layout.svelte";
     import { formatLabel, formatPerson, formatSplit } from "../../format";
 
-    let payer: Person | null = null;
-    let split: Split | null = null;
+    let date: string = new Date().toISOString().slice(0, 10);
+    let payer: Person | undefined = undefined;
+    let label: Label | undefined = undefined;
+    let split: Split | undefined = undefined;
+    let detail: string | null = null;
     let paid: number | null = null;
     let owed: number | null = null;
-    let label: Label | null = null;
-    let detail: string | null = null;
-    let date: string | null = new Date().toISOString().slice(0, 10);
+
+    $: if (payer !== undefined && label != undefined) {
+        trySplitrecc(payer, label);
+    }
+
+    async function trySplitrecc(payer: Person, label: Label) {
+        if (split === undefined) {
+            try {
+                const recc = await getExpenseSplitrecc(payer, label);
+                console.log(recc);
+
+                if (recc !== null) {
+                    split = recc;
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    }
 
     async function handleSubmit() {
-        if (paid === null || payer === null || split === null || date === null || label === null) {
+        if (paid === null || payer === undefined || split === undefined || label === undefined) {
             return;
         }
         try {
@@ -57,6 +76,10 @@
 <Layout tab={null}>
     <form on:submit|preventDefault={handleSubmit}>
         <FormField style="width: 100%">
+            <Textfield style="width: 100%;" label="Data" type="date" bind:value={date} />
+        </FormField>
+
+        <FormField style="width: 100%">
             <Select style="width: 100%" bind:value={payer} label="Pagante">
                 {#each Person.options as person}
                     <Option value={person}>{formatPerson(person)}</Option>
@@ -65,21 +88,17 @@
         </FormField>
 
         <FormField style="width: 100%">
-            <Textfield style="width: 100%;" label="Data" type="date" bind:value={date} />
+            <Select style="width: 100%" bind:value={label} label="Etiqueta">
+                {#each Label.options as label}
+                    <Option value={label}>{formatLabel(label)}</Option>
+                {/each}
+            </Select>
         </FormField>
 
         <FormField style="width: 100%">
             <Select style="width: 100%" bind:value={split} label="Divisão">
                 {#each Split.options as split}
                     <Option value={split}>{formatSplit(split)}</Option>
-                {/each}
-            </Select>
-        </FormField>
-
-        <FormField style="width: 100%">
-            <Select style="width: 100%" bind:value={label} label="Etiqueta">
-                {#each Label.options as label}
-                    <Option value={label}>{formatLabel(label)}</Option>
                 {/each}
             </Select>
         </FormField>

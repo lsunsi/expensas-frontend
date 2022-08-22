@@ -132,6 +132,16 @@ export async function postExpenseRefuse(id: number) {
     );
 }
 
+export async function getExpenseSplitrecc(payer: Person, label: Label): Promise<Split | null> {
+    return decode200json(
+        await fetch(`${URL}/expense/splitrecc/${payer}/${label}`, {
+            credentials: "include",
+            method: "GET",
+        }),
+        Split.nullable().parse
+    );
+}
+
 export async function postTransferSubmit(amount: number, date: string) {
     const body = JSON.stringify({ amount, date });
     const headers = { "Content-Type": "application/json", Accept: "application/json" };
