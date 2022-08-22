@@ -8,13 +8,7 @@
     import { goto } from "$app/navigation";
     import Fab, { Icon } from "@smui/fab";
     import Tooltip, { Wrapper } from "@smui/tooltip";
-    import {
-        getSessionConfirmable,
-        postSessionConfirm,
-        postSessionRefuse,
-        getSummary,
-        type Summary,
-    } from "../../client";
+    import { postSessionConfirm, postSessionRefuse, type Summary } from "../../client";
 
     export let data: PageData;
 
@@ -36,22 +30,13 @@
                 .then(() => (confirmable = null))
                 .catch(() => goto("/caroco"));
     }
-
-    async function refresh() {
-        try {
-            await getSummary(fetch).then((s) => (summary = s));
-            await getSessionConfirmable(fetch).then((c) => (confirmable = c));
-        } catch (e) {
-            await goto("/caroco");
-        }
-    }
 </script>
 
 <svelte:head>
     <title>resumão dos custo</title>
 </svelte:head>
 
-<Layout tab="home" on:refresh={refresh} refreshable>
+<Layout tab="home">
     <div class="container">
         <div class="paper">
             <Paper variant="unelevated">
