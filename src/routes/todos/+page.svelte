@@ -4,10 +4,11 @@
     import {
         postExpenseConfirm,
         postExpenseRefuse,
-        getList,
         ListItemKind,
         postTransferConfirm,
         postTransferRefuse,
+        Label,
+        getList,
     } from "../../client";
     import { Meta } from "@smui/list";
     import Layout from "../../components/layout.svelte";
@@ -15,27 +16,27 @@
     import { formatCents, formatPerson, formatLabel, formatSplit, formatMonth } from "../../format";
     import Accordion, { Panel, Header, Content } from "@smui-extra/accordion";
     import Switch from "@smui/switch";
+    import Chip, { Set as ChipSet, Text } from "@smui/chips";
     import FormField from "@smui/form-field";
 
     export let data: PageData;
-    $: list = data.list;
+
+    let { labels, list } = data;
+    let mine = true;
 
     const opensMonth: { [n: number]: boolean } = {};
     const opensExpenses: { [n: number]: boolean } = {};
     const opensTransfers: { [n: number]: boolean } = {};
 
-    const setFirstMonthOpen = () => {
-        opensMonth[list.months[0].n] = true;
-    };
-
-    let mine = true;
-
-    $: if (list.pendings.length === 0 && list.months.length > 0) {
-        setFirstMonthOpen();
+    async function chipClicked() {
+        setTimeout(reload, 0);
     }
 
     async function reload() {
-        list = await getList(fetch);
+        const query = new URLSearchParams(labels.length === 0 ? {} : { labels: labels.join("-") });
+        await goto(`?${query}`, { replaceState: true });
+
+        list = await getList(fetch, labels.length === 0 ? null : labels);
     }
 
     async function confirmExpense(id: number) {
@@ -84,6 +85,16 @@
         <Switch bind:checked={mine} icons={false} color="secondary" />
         <span slot="label">{mine ? "Meu" : "Nosso"}</span>
     </FormField>
+
+    <div style="overflow: scroll">
+        <div style="width: max-content">
+            <ChipSet chips={Label.options} filter let:chip bind:selected={labels}>
+                <Chip {chip} on:click={chipClicked}>
+                    <Text tabindex={0}>{formatLabel(chip)}</Text>
+                </Chip>
+            </ChipSet>
+        </div>
+    </div>
 
     {#if list.pendings.length > 0}
         <Accordion style="margin: 8px">

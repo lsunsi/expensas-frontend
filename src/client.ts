@@ -143,8 +143,8 @@ export async function getExpenseSplitrecc(payer: Person, label: Label): Promise<
 }
 
 export async function postTransferSubmit(amount: number, date: string) {
-    const body = JSON.stringify({ amount, date });
     const headers = { "Content-Type": "application/json", Accept: "application/json" };
+    const body = JSON.stringify({ amount, date });
 
     return decode200(
         await fetch(`${URL}/transfer/submit`, {
@@ -232,9 +232,15 @@ const ListResponse = z.object({
     months: ListMonth.array(),
 });
 
-export async function getList(fetch: LoadEvent["fetch"]): Promise<ListResponse> {
+export async function getList(
+    fetch: LoadEvent["fetch"],
+    labels: Label[] | null
+): Promise<ListResponse> {
+    const headers = { "Content-Type": "application/json", Accept: "application/json" };
+    const body = JSON.stringify({ labels });
+
     return decode200json(
-        await fetch(`${URL}/list`, { credentials: "include", method: "GET" }),
+        await fetch(`${URL}/list`, { credentials: "include", method: "POST", headers, body }),
         ListResponse.parse
     );
 }
