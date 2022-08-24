@@ -3,13 +3,15 @@
     import List, { Item, Graphic, Text } from "@smui/list";
     import { postSessionDrop } from "../../client";
     import { goto } from "$app/navigation";
+    import { snack } from "../../stores";
 
     async function handleLeave() {
         try {
             await postSessionDrop();
+            snack.push("🚬 Adeus!");
             await goto("/quem");
         } catch (e) {
-            await goto("/caroco");
+            snack.push("😵‍💫 Ah pronto, bugou");
         }
     }
 </script>

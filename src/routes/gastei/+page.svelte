@@ -7,6 +7,7 @@
     import FormField from "@smui/form-field";
     import Layout from "../../components/layout.svelte";
     import { formatLabel, formatPerson, formatSplit } from "../../format";
+    import { snack } from "../../stores";
 
     let date: string = new Date().toISOString().slice(0, 10);
     let payer: Person | undefined = undefined;
@@ -62,9 +63,10 @@
                 );
             }
 
+            snack.push("💌 Gasto registrado!");
             await goto("/resumao");
         } catch (e) {
-            await goto("/caroco");
+            snack.push("😵‍💫 Ah pronto, bugou");
         }
     }
 </script>

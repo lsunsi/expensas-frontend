@@ -9,6 +9,7 @@
     } from "../../client";
     import CircularProgress from "@smui/circular-progress";
     import Button from "@smui/button";
+    import { snack } from "../../stores";
 
     let refused = false;
     let stale = false;
@@ -30,11 +31,12 @@
                 done = true;
 
                 await postSessionConvert();
+                snack.push("🎂 Bem-vindoa!");
                 await goto("/resumao");
             }
         } catch (e) {
             console.log(e);
-            await goto("/caroco");
+            snack.push("😵‍💫 Ah pronto, bugou");
         }
     }
 
@@ -43,9 +45,10 @@
 
         try {
             await postSessionCancel();
+            snack.push("🎂 Blz, não queria mesmo");
             await goto("/quem");
         } catch (e) {
-            await goto("/caroco");
+            snack.push("😵‍💫 Ah pronto, bugou");
         }
     }
 
@@ -53,6 +56,7 @@
         done = true;
 
         await postSessionCancel();
+        snack.push("🎂 Blz, não queria mesmo");
         await goto("/quem");
     }
 

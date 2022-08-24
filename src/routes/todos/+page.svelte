@@ -18,6 +18,7 @@
     import Switch from "@smui/switch";
     import Chip, { Set as ChipSet, Text } from "@smui/chips";
     import FormField from "@smui/form-field";
+    import { snack } from "../../stores";
 
     export let data: PageData;
 
@@ -42,36 +43,40 @@
     async function confirmExpense(id: number) {
         try {
             await postExpenseConfirm(id);
+            snack.push("🎉 Gasto confirmado!");
             await reload();
         } catch {
-            await goto("/caroco");
+            snack.push("😵‍💫 Ah pronto, bugou");
         }
     }
 
     async function refuseExpense(id: number) {
         try {
             await postExpenseRefuse(id);
+            snack.push("🚫 Gasto recusado.");
             await reload();
         } catch {
-            await goto("/caroco");
+            snack.push("😵‍💫 Ah pronto, bugou");
         }
     }
 
     async function confirmTransfer(id: number) {
         try {
             await postTransferConfirm(id);
+            snack.push("🎉 Transferência confirmada!");
             await reload();
         } catch {
-            await goto("/caroco");
+            snack.push("😵‍💫 Ah pronto, bugou");
         }
     }
 
     async function refuseTransfer(id: number) {
         try {
             await postTransferRefuse(id);
+            snack.push("🚫 Transferência recusada.");
             await reload();
         } catch {
-            await goto("/caroco");
+            snack.push("😵‍💫 Ah pronto, bugou");
         }
     }
 </script>

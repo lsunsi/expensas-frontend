@@ -9,6 +9,7 @@
     import Fab, { Icon } from "@smui/fab";
     import Tooltip, { Wrapper } from "@smui/tooltip";
     import { postSessionConfirm, postSessionRefuse, type Summary } from "../../client";
+    import { snack } from "../../stores";
 
     export let data: PageData;
 
@@ -20,15 +21,25 @@
     function handleConfirm() {
         confirmable &&
             postSessionConfirm(confirmable)
-                .then(() => (confirmable = null))
-                .catch(() => goto("/caroco"));
+                .then(() => {
+                    snack.push("🐃 Sessão aceita!");
+                    confirmable = null;
+                })
+                .catch(() => {
+                    snack.push("😵‍💫 Ah pronto, bugou");
+                });
     }
 
     function handleRefuse() {
         confirmable &&
             postSessionRefuse(confirmable)
-                .then(() => (confirmable = null))
-                .catch(() => goto("/caroco"));
+                .then(() => {
+                    snack.push("🐃 Sessão recusada!");
+                    confirmable = null;
+                })
+                .catch(() => {
+                    snack.push("😵‍💫 Ah pronto, bugou");
+                });
     }
 </script>
 

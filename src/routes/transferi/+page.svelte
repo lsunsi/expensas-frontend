@@ -5,6 +5,7 @@
     import Textfield from "@smui/textfield";
     import FormField from "@smui/form-field";
     import Layout from "../../components/layout.svelte";
+    import { snack } from "../../stores";
 
     let amount: number | null = null;
     let date: string = new Date().toISOString().slice(0, 10);
@@ -15,9 +16,10 @@
         }
         try {
             await postTransferSubmit(Math.trunc(amount * 100), date);
+            snack.push("💌 Transferência registrada!");
             await goto("/resumao");
         } catch (e) {
-            await goto("/caroco");
+            snack.push("😵‍💫 Ah pronto, bugou");
         }
     }
 </script>

@@ -22,6 +22,7 @@
         "@smui/paper": "^6.0.0-beta.16",
         "@smui/ripple": "^6.0.0-beta.16",
         "@smui/select": "^6.0.0-beta.16",
+        "@smui/snackbar": "^6.1.0",
         "@smui/switch": "^6.1.0",
         "@smui/tab": "^6.0.0-beta.16",
         "@smui/tab-bar": "^6.0.0-beta.16",
