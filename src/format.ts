@@ -40,11 +40,11 @@ export function formatLabel(label: Label): string {
         case "Leisure":
             return "Lazer";
         case "Water":
-            return "Conta de agua";
+            return "Conta de água";
         case "Internet":
             return "Conta de internet";
         case "Gas":
-            return "Refill do gás";
+            return "Refil do gás";
         case "Housing":
             return "Aluguel";
         case "Electricity":
