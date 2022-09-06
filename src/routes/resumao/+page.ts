@@ -8,6 +8,6 @@ export const load: PageLoad = async ({ fetch }) => {
         const confirmable = await getSessionConfirmable(fetch);
         return { summary, confirmable };
     } catch (e) {
-        return redirect(302, "/caroco");
+        throw redirect(302, "/caroco");
     }
 };
