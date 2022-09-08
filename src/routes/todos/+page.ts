@@ -15,6 +15,7 @@ export const load: PageLoad = async ({ fetch, url }) => {
         const list = await getList(fetch, labels.length === 0 ? null : labels);
         return { labels, list };
     } catch (e) {
+        console.error(e);
         throw redirect(302, "/caroco");
     }
 };
