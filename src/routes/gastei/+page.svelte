@@ -6,7 +6,7 @@
     import Textfield from "@smui/textfield";
     import FormField from "@smui/form-field";
     import Layout from "../../components/layout.svelte";
-    import { formatLabel, formatPerson, formatSplit } from "../../format";
+    import { formatLabel, formatPerson } from "../../format";
     import { snack } from "../../stores";
 
     let date: string = new Date().toISOString().slice(0, 10);
@@ -99,9 +99,9 @@
 
         <FormField style="width: 100%">
             <Select style="width: 100%" bind:value={split} label="Divisão">
-                {#each Split.options as split}
-                    <Option value={split}>{formatSplit(split)}</Option>
-                {/each}
+                <Option value={Split.enum.Proportional3to2}>Proporcional</Option>
+                <Option value={Split.enum.Arbitrary}>Arbitrária</Option>
+                <Option value={Split.enum.Evenly}>Igualitária</Option>
             </Select>
         </FormField>
 

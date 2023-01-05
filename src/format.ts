@@ -20,8 +20,10 @@ export function formatPerson(person: Person): string {
 
 export function formatSplit(split: Split): string {
     switch (split) {
-        case "Proportional":
-            return "Proporcional";
+        case "Proportional2to1":
+            return "Proporcional (2 pra 1)";
+        case "Proportional3to2":
+            return "Proporcional (3 pra 2)";
         case "Arbitrary":
             return "Arbitrária";
         case "Evenly":

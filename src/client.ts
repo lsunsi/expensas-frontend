@@ -9,7 +9,7 @@ export type Person = z.infer<typeof Person>;
 export const Person = z.enum(["Ale", "Lu"]);
 
 export type Split = z.infer<typeof Split>;
-export const Split = z.enum(["Proportional", "Arbitrary", "Evenly"]);
+export const Split = z.enum(["Proportional2to1", "Proportional3to2", "Arbitrary", "Evenly"]);
 
 export type Label = z.infer<typeof Label>;
 export const Label = z.enum([
