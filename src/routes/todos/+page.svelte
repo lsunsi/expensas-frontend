@@ -199,7 +199,7 @@
             <Panel bind:open={opensMonth[m.n]}>
                 <Header>
                     <span class="flex-row-space-between">
-                        <span class="month">{formatMonth(m.n)}</span>
+                        <span class="month">{formatMonth((m.n % 12) + 1)}</span>
 
                         {#if !opensMonth[m.n]}
                             {formatCents(mine ? m.spent_me : m.spent_we)}
